@@ -8,16 +8,28 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import * as React from 'react';
-import { ColorSchemeName, Pressable } from 'react-native';
+import { TouchableOpacity, ColorSchemeName, Pressable, Text } from 'react-native';
 
 import Colors from '../constants/Colors';
 import useColorScheme from '../hooks/useColorScheme';
 import ModalScreen from '../screens/ModalScreen';
 import NotFoundScreen from '../screens/NotFoundScreen';
 import TabOneScreen from '../screens/TabOneScreen';
+import TabThreeScreen from '../screens/TabThreeScreen';
 import TabTwoScreen from '../screens/TabTwoScreen';
 import { RootStackParamList, RootTabParamList, RootTabScreenProps } from '../types';
 import LinkingConfiguration from './LinkingConfiguration';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import NoteScreen from '../screens/NoteScreen';
+import BudgetScreen from '../screens/BudgetScreen';
+import DaysScreen from '../screens/DaysScreen';
+import CollectionScreen from '../screens/CollectionScreen';
+import SignInScreen from '../screens/SignInScreen';
+import SignUpScreen from '../screens/SignUpScreen';
+import SplashScreen from '../screens/SplashScreen';
+import {useDispatch, useSelector} from "react-redux"
+import { AppDispatch } from '../store';
+import CollectionModal from '../components/CollectionModal';
 
 export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeName }) {
   return (
@@ -36,10 +48,70 @@ export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeNa
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 function RootNavigator() {
+  const [collectionModalVisible, setCollectionModalVisible] = React.useState(false);
   return (
     <Stack.Navigator>
+      <Stack.Screen name="Splash" component={SplashScreen} options={{ headerShown: false }} />
+      <Stack.Screen name="SignIn" component={SignInScreen} options={{ headerShown: false }} />
+      <Stack.Screen name="SignUp" component={SignUpScreen} options={{ headerShown: false }} />
       <Stack.Screen name="Root" component={BottomTabNavigator} options={{ headerShown: false }} />
       <Stack.Screen name="NotFound" component={NotFoundScreen} options={{ title: 'Oops!' }} />
+      <Stack.Screen name="Collection" component={CollectionScreen} options={{ 
+        title: 'Collections📦',
+        headerStyle: {
+          backgroundColor: '#8A8681',
+        },
+        headerTintColor: 'black',
+        headerRight: () => (
+          <CollectionModal/>
+        ),
+        }} />
+      <Stack.Screen name="Note" component={NoteScreen} options={{ 
+        title: 'Todos❤️',
+        headerStyle: {
+          backgroundColor: '#8A8681',
+        },
+        headerTintColor: 'black',
+        headerRight: () => (
+          <TouchableOpacity
+            style = {{height: 100, marginTop: -5}}
+            onPress={() => alert('This is a button!')}  
+          >
+            <Text style = {{fontSize:30}}>...</Text>
+          </TouchableOpacity>
+        ),
+        }} />
+      <Stack.Screen name="Budget" component={BudgetScreen} options={{ 
+        title: 'Our Budget Plan💰',
+        headerStyle: {
+          backgroundColor: '#8A8681',
+        },
+        headerTintColor: 'black',
+        headerRight: () => (
+          <TouchableOpacity
+            style = {{height: 100, marginTop: -5}}
+            onPress={() => alert('This is a button!')}  
+          >
+            <Text style = {{fontSize:30}}>...</Text>
+          </TouchableOpacity>
+        ),
+        }} />
+
+      <Stack.Screen name="Days" component={DaysScreen} options={{ 
+        title: 'Our Days Matter📅',
+        headerStyle: {
+          backgroundColor: '#8A8681',
+        },
+        headerTintColor: 'black',
+        headerRight: () => (
+          <TouchableOpacity
+            style = {{height: 100, marginTop: 0}}
+            onPress={() => alert('This is a button!')}  
+          >
+            <Text style = {{fontSize:30}}>+</Text>
+          </TouchableOpacity>
+        ),
+        }} />
       <Stack.Group screenOptions={{ presentation: 'modal' }}>
         <Stack.Screen name="Modal" component={ModalScreen} />
       </Stack.Group>
@@ -59,29 +131,37 @@ function BottomTabNavigator() {
   return (
     <BottomTab.Navigator
       initialRouteName="TabOne"
-      screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme].tint,
-      }}>
+      // screenOptions={{
+      //   tabBarActiveTintColor: Colors[colorScheme].tint,
+      // }}
+      
+      screenOptions={({ route }) => ({
+        tabBarIcon: ({ focused, color, size }) => {
+          let iconName;
+
+          if (route.name === 'TabOne') {
+            iconName = focused
+              ? 'people-circle'
+              : 'people-circle-outline';
+          } else if (route.name === 'TabTwo') {
+            iconName = focused ? 'heart-circle' : 'heart-circle-outline';
+          } else {
+            iconName = focused ? 'person-circle' : 'person-circle-outline';
+          }
+
+          // You can return any component that you like here!
+          return <Ionicons name={iconName} size={size} color={color} />;
+        },
+        tabBarActiveTintColor: 'pink',
+        tabBarInactiveTintColor: 'gray',
+      })}
+      >
       <BottomTab.Screen
         name="TabOne"
         component={TabOneScreen}
         options={({ navigation }: RootTabScreenProps<'TabOne'>) => ({
-          title: 'Tab One',
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
-          headerRight: () => (
-            <Pressable
-              onPress={() => navigation.navigate('Modal')}
-              style={({ pressed }) => ({
-                opacity: pressed ? 0.5 : 1,
-              })}>
-              <FontAwesome
-                name="info-circle"
-                size={25}
-                color={Colors[colorScheme].text}
-                style={{ marginRight: 15 }}
-              />
-            </Pressable>
-          ),
+          title: 'We',
+          headerShown: false,
         })}
       />
       <BottomTab.Screen
@@ -89,19 +169,19 @@ function BottomTabNavigator() {
         component={TabTwoScreen}
         options={{
           title: 'Tab Two',
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+          headerShown: false,
+          // tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+        }}
+      />
+      <BottomTab.Screen
+        name="TabThree"
+        component={TabThreeScreen}
+        options={{
+          title: 'Me',
+          headerShown: false,
+          // tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
         }}
       />
     </BottomTab.Navigator>
   );
-}
-
-/**
- * You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
- */
-function TabBarIcon(props: {
-  name: React.ComponentProps<typeof FontAwesome>['name'];
-  color: string;
-}) {
-  return <FontAwesome size={30} style={{ marginBottom: -3 }} {...props} />;
 }

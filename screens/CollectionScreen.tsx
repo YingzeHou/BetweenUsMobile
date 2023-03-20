@@ -39,12 +39,6 @@ export default function CollectionScreen({route, navigation}: any ) {
                 keyboardVerticalOffset={Platform.OS === "ios"? 100: 0}
                 style={styles.formContainer}
             >
-                {/* <TouchableOpacity
-                    style = {{position:'absolute', top:-20, zIndex:2}}
-                    onPress={() => alert('This is a button!')}  
-                >
-                    <Text style = {{fontSize:30}}>+</Text>
-                </TouchableOpacity> */}
                 <View style={styles.container}>
                     <ScrollView style={styles.scroll} showsVerticalScrollIndicator={false}>
                         {screenState.collections.map((collection, index) => (

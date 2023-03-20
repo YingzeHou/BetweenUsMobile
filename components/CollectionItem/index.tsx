@@ -5,7 +5,8 @@ import { useEffect, useState } from "react";
 import {db, auth} from "../../firebase"
 import { AppDispatch, RootState } from '../../store';
 import {useDispatch, useSelector} from 'react-redux';
-import { updateCollection } from "../../redux/collectionListSlice";
+import { updateCollection, deleteCollection } from "../../redux/collectionListSlice";
+import { casDeleteTodos } from '../../redux/todoListSlice';
 
 interface CollectionItemProps {
     collection: {
@@ -39,7 +40,7 @@ export default function CollectionItem({collection, navigation, index, closeRow,
             <TouchableOpacity onPress={()=>setEditModalVisible(!editModalVisible)}>
                 <Animated.Text style={[{fontSize:15, color:'black', marginRight:15}, {transform:[{scale}]}]}>Edit</Animated.Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={()=>alert("Delete")}>
+            <TouchableOpacity onPress={()=>setDeleteModalVisible(!deleteModalVisible)}>
                 <Animated.Text style={[{fontSize:15, color:'red', marginRight:15}, {transform:[{scale}]}]}>Delete</Animated.Text>
             </TouchableOpacity>
           </View>
@@ -79,6 +80,19 @@ export default function CollectionItem({collection, navigation, index, closeRow,
         setEditModalVisible(false)
         closeRow(index, "absolute")
     }
+
+    const deleteCol = () => {
+        dispatch(deleteCollection({
+            atIndex: index
+        }))
+
+        collectionRef.doc(collection.id).delete()
+        .then(() => {
+            dispatch(casDeleteTodos(collection.id))
+        })
+        .catch((error) => alert(error));
+
+    }
     return(
         <GestureHandlerRootView>
             <Swipeable
@@ -88,7 +102,6 @@ export default function CollectionItem({collection, navigation, index, closeRow,
                 }
                 onSwipeableOpen={() => closeRow(index, "relative")}
                 ref={(ref) => setRow(index, ref)}
-                // rightThreshold={-100}
             >
                 <TouchableOpacity onPress={()=> navigation.navigate('Note', {
                     parentId: collection.id,
@@ -147,6 +160,33 @@ export default function CollectionItem({collection, navigation, index, closeRow,
                     style={[styles.button, styles.buttonClose]}
                     onPress={() => update()}>
                     <Text style={styles.textStyle}>Update!</Text>
+                    </Pressable>
+                </View>
+                </View>
+                </TouchableOpacity>
+            </Modal>
+
+            <Modal
+                animationType="slide"
+                transparent={true}
+                visible={deleteModalVisible}
+                onRequestClose={() => {
+                setDeleteModalVisible(!deleteModalVisible);
+                }}>
+                
+                <TouchableOpacity 
+                    style={styles.container} 
+                    activeOpacity={1} 
+                    onPressOut={() => {setDeleteModalVisible(false), closeRow(index, "absolute")}}
+                >
+                <View style={styles.centeredView}>
+                <View style={styles.modalView}>
+                    <Text style={styles.modalText}>Deletion of collection will delete all todos within</Text>
+                    <Text style={styles.modalText}>Are you sure to delete?</Text>
+                    <Pressable
+                    style={[styles.button, styles.buttonClose]}
+                    onPress={() => deleteCol()}>
+                        <Text style={styles.textStyle}>Delete</Text>
                     </Pressable>
                 </View>
                 </View>

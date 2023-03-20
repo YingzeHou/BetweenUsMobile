@@ -34,7 +34,6 @@ const initialState: TodoState = {
 }
 
 const todoRef = db.collection("todos");
-// const [todos, setTodos] = useState<todo[]>([]);
 
 export const fetchTodos = createAsyncThunk('todo/fetchTodos', (parentIdArg: string)=>{
     return todoRef
@@ -60,6 +59,17 @@ export const fetchTodos = createAsyncThunk('todo/fetchTodos', (parentIdArg: stri
                 }
             })
             return {todos, prevIds};
+        })
+})
+
+export const casDeleteTodos = createAsyncThunk('todo/casDeleteTodo', (parentIdArg: string) => {
+    todoRef
+        .where("parentId", "==", parentIdArg)
+        .get()
+        .then((querySnapShot) => {
+            querySnapShot.forEach((doc) => {
+                todoRef.doc(doc.id).delete().then(()=>{}).catch((error) => alert(error))
+            })
         })
 })
 

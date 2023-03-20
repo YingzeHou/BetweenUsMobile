@@ -48,11 +48,6 @@ export default function TodoItem({todo, onSubmit, onDelete, onUpdate, focus}: To
         setIsChecked(!isChecked);
     } 
 
-    // const updateStatus = () => {
-    //     setIsChecked(!isChecked);
-    //     onUpdate(content, isChecked);
-    // }
-
     const onKeyPress = ({nativeEvent}) => {
         if(nativeEvent.key === "Backspace" && content === '') {
             // delete item

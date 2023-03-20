@@ -57,7 +57,7 @@ function RootNavigator() {
       <Stack.Screen name="Root" component={BottomTabNavigator} options={{ headerShown: false }} />
       <Stack.Screen name="NotFound" component={NotFoundScreen} options={{ title: 'Oops!' }} />
       <Stack.Screen name="Collection" component={CollectionScreen} options={{ 
-        title: 'Collections📦',
+        title: 'Collections',
         headerStyle: {
           backgroundColor: '#8A8681',
         },
@@ -67,7 +67,7 @@ function RootNavigator() {
         ),
         }} />
       <Stack.Screen name="Note" component={NoteScreen} options={{ 
-        title: 'Todos❤️',
+        title: 'Todos',
         headerStyle: {
           backgroundColor: '#8A8681',
         },
@@ -82,7 +82,7 @@ function RootNavigator() {
         ),
         }} />
       <Stack.Screen name="Budget" component={BudgetScreen} options={{ 
-        title: 'Our Budget Plan💰',
+        title: 'Our Budget Plan',
         headerStyle: {
           backgroundColor: '#8A8681',
         },
@@ -98,7 +98,7 @@ function RootNavigator() {
         }} />
 
       <Stack.Screen name="Days" component={DaysScreen} options={{ 
-        title: 'Our Days Matter📅',
+        title: 'Our Days Matter',
         headerStyle: {
           backgroundColor: '#8A8681',
         },

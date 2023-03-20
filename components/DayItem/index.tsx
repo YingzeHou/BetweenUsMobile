@@ -26,20 +26,16 @@ export default function DayItem({day, navigation, index}: DayItemProps) {
     return (
         <GestureHandlerRootView>
             <TouchableOpacity onPress={()=> navigation.navigate('DayDetail', {
-                parentId: day.id,
+                day: day
             })}
             >
                 <View style={styles.container}>
                     <View style={styles.root}>
-                        {/* <View style={styles.iconContainer}>
-                            <MaterialCommunityIcons name="list-status" size={24} color="white" />
-                        </View> */}
                         <View style={styles.textContainer}>
                             <Text style={styles.title}>{day.event}</Text>
                             <Text style={styles.desc}>{day.address}</Text>
                         </View>
                         <View style={styles.textContainer}>
-                            {/* <Text style={styles.title}>{day.category}</Text> */}
                             {getDuration(day.startDate) > 0? (
                                 <Text style={styles.titlePast}>{getDuration(day.startDate)} Days</Text>
                             ): (

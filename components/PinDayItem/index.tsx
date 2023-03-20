@@ -26,7 +26,7 @@ export default function PinDayItem({day, navigation, index}: DayItemProps) {
     return (
         <GestureHandlerRootView>
             <TouchableOpacity onPress={()=> navigation.navigate('DayDetail', {
-                parentId: day.id,
+                day: day
             })}
             >
                 <View style={styles.container}>
@@ -46,11 +46,6 @@ export default function PinDayItem({day, navigation, index}: DayItemProps) {
                             )}
                         </View>
                     </View>
-                    {/* <View style={{
-                        backgroundColor: '#A2A2A2',
-                        height: 1,
-                        width: '95%'}}
-                    /> */}
                 </View>
             </TouchableOpacity>
         </GestureHandlerRootView>
@@ -70,7 +65,7 @@ const styles = StyleSheet.create({
         fontWeight:"bold",
         borderWidth:2,
         padding:2,
-        borderRadius:10
+        borderRadius:10,
     },
     root:{
         backgroundColor:'#f5f5f5',

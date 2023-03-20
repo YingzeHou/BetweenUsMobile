@@ -78,7 +78,7 @@ function RootNavigator() {
             style = {{height: 100, marginTop: -5}}
             onPress={() => alert('This is a button!')}  
           >
-            <Text style = {{fontSize:30}}>...</Text>
+            <Text style = {{fontSize:30, color:'white'}}>...</Text>
           </TouchableOpacity>
         ),
         }} />
@@ -109,23 +109,23 @@ function RootNavigator() {
             style = {{height: 100, marginTop: 0}}
             onPress={() => alert('This is a button!')}  
           >
-            <Text style = {{fontSize:30}}>+</Text>
+            <Text style = {{fontSize:30, color:'white'}}>+</Text>
           </TouchableOpacity>
         ),
         }} />
 
       <Stack.Screen name="DayDetail" component={DayDetailScreen} options={{ 
-        title: 'Our Days Matter',
+        title: 'Day Detail',
         headerStyle: {
           backgroundColor: '#302B2B',
         },
         headerTintColor: 'white',
         headerRight: () => (
           <TouchableOpacity
-            style = {{height: 100, marginTop: 0}}
+            style = {{height: 100, marginTop:15}}
             onPress={() => alert('This is a button!')}  
           >
-            <Text style = {{fontSize:30}}>+</Text>
+            <Text style = {{fontSize:15,color:"white", alignSelf:'center'}}>Edit</Text>
           </TouchableOpacity>
         ),
         }} />

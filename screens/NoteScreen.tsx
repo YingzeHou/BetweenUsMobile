@@ -84,7 +84,7 @@ export default function NoteScreen({route, navigation}: any) {
 
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-        <ImageBackground source={require('../assets/images/todobg.png')} resizeMode="cover" style={styles.container} imageStyle={{opacity:1}}>
+        <View style={{height:'100%', width:'100%', backgroundColor:'white'}}>
                 {screenState.loading && (<Text>LOADING...</Text>)}
                 {screenState.error && (<Text>ERROR</Text>)}
                 {!screenState.loading && !screenState.error && (
@@ -138,7 +138,7 @@ export default function NoteScreen({route, navigation}: any) {
                         {/* <Button color={"black"} title="Save Changes" onPress={saveToCloud}/> */}
                     </KeyboardAvoidingView>
                 )}
-        </ImageBackground>
+        </View>
         </TouchableWithoutFeedback>
     )
 }

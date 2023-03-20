@@ -20,6 +20,7 @@ export type RootStackParamList = {
   Note: undefined;
   Budget: undefined;
   Days: undefined;
+  DayDetail: undefined;
   Collection: undefined;
   SignIn: undefined;
   SignUp: undefined;

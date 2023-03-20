@@ -30,6 +30,7 @@ import SplashScreen from '../screens/SplashScreen';
 import {useDispatch, useSelector} from "react-redux"
 import { AppDispatch } from '../store';
 import CollectionModal from '../components/CollectionModal';
+import DayDetailScreen from '../screens/DayDetailScreen';
 
 export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeName }) {
   return (
@@ -59,9 +60,9 @@ function RootNavigator() {
       <Stack.Screen name="Collection" component={CollectionScreen} options={{ 
         title: 'Collections',
         headerStyle: {
-          backgroundColor: '#8A8681',
+          backgroundColor: '#302B2B',
         },
-        headerTintColor: 'black',
+        headerTintColor: 'white',
         headerRight: () => (
           <CollectionModal/>
         ),
@@ -69,9 +70,9 @@ function RootNavigator() {
       <Stack.Screen name="Note" component={NoteScreen} options={{ 
         title: 'Todos',
         headerStyle: {
-          backgroundColor: '#8A8681',
+          backgroundColor: '#302B2B',
         },
-        headerTintColor: 'black',
+        headerTintColor: 'white',
         headerRight: () => (
           <TouchableOpacity
             style = {{height: 100, marginTop: -5}}
@@ -84,9 +85,9 @@ function RootNavigator() {
       <Stack.Screen name="Budget" component={BudgetScreen} options={{ 
         title: 'Our Budget Plan',
         headerStyle: {
-          backgroundColor: '#8A8681',
+          backgroundColor: '#302B2B',
         },
-        headerTintColor: 'black',
+        headerTintColor: 'white',
         headerRight: () => (
           <TouchableOpacity
             style = {{height: 100, marginTop: -5}}
@@ -100,9 +101,9 @@ function RootNavigator() {
       <Stack.Screen name="Days" component={DaysScreen} options={{ 
         title: 'Our Days Matter',
         headerStyle: {
-          backgroundColor: '#8A8681',
+          backgroundColor: '#302B2B',
         },
-        headerTintColor: 'black',
+        headerTintColor: 'white',
         headerRight: () => (
           <TouchableOpacity
             style = {{height: 100, marginTop: 0}}
@@ -112,6 +113,23 @@ function RootNavigator() {
           </TouchableOpacity>
         ),
         }} />
+
+      <Stack.Screen name="DayDetail" component={DayDetailScreen} options={{ 
+        title: 'Our Days Matter',
+        headerStyle: {
+          backgroundColor: '#302B2B',
+        },
+        headerTintColor: 'white',
+        headerRight: () => (
+          <TouchableOpacity
+            style = {{height: 100, marginTop: 0}}
+            onPress={() => alert('This is a button!')}  
+          >
+            <Text style = {{fontSize:30}}>+</Text>
+          </TouchableOpacity>
+        ),
+        }} />
+        
       <Stack.Group screenOptions={{ presentation: 'modal' }}>
         <Stack.Screen name="Modal" component={ModalScreen} />
       </Stack.Group>

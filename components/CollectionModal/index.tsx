@@ -35,7 +35,7 @@ export default function CollectionModal() {
                 style = {{position:'absolute', top:-20, right:5, zIndex:2}}
                 onPress={() => setModalVisible(true)}  
             >
-                <Text style = {{fontSize:30}}>+</Text>
+                <Text style = {{fontSize:30, color:"white"}}>+</Text>
             </TouchableOpacity>
             <Modal
                 animationType="slide"

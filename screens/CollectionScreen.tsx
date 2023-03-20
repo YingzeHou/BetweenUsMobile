@@ -33,7 +33,7 @@ export default function CollectionScreen({route, navigation}: any ) {
     };
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-            <ImageBackground source={require('../assets/images/todobg.png')} resizeMode="cover" style={styles.container} imageStyle={{opacity:1}}>
+            {/* <ImageBackground source={require('../assets/images/todobg.png')} resizeMode="cover" style={styles.container} imageStyle={{opacity:1}}> */}
             <KeyboardAvoidingView
                 behavior={Platform.OS === "ios" ? "padding" : "height"} 
                 keyboardVerticalOffset={Platform.OS === "ios"? 100: 0}
@@ -59,7 +59,7 @@ export default function CollectionScreen({route, navigation}: any ) {
 
                 </Modal>
             </KeyboardAvoidingView>
-            </ImageBackground>
+            {/* </ImageBackground> */}
         </TouchableWithoutFeedback>
     )
 }
@@ -73,6 +73,7 @@ const styles = StyleSheet.create({
         width:'100%',
         height:'100%',
         top:0,
+        backgroundColor:'white'
     },
     scroll:{
         flex: 1,

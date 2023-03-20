@@ -22,7 +22,7 @@ const getDuration = (startDateStr: string) => {
     return duration
 }
 
-export default function DayItem({day, navigation, index}: DayItemProps) {
+export default function PinDayItem({day, navigation, index}: DayItemProps) {
     return (
         <GestureHandlerRootView>
             <TouchableOpacity onPress={()=> navigation.navigate('DayDetail', {
@@ -31,27 +31,26 @@ export default function DayItem({day, navigation, index}: DayItemProps) {
             >
                 <View style={styles.container}>
                     <View style={styles.root}>
-                        {/* <View style={styles.iconContainer}>
-                            <MaterialCommunityIcons name="list-status" size={24} color="white" />
-                        </View> */}
+                        <Text style={styles.pin}>Pinned</Text>
                         <View style={styles.textContainer}>
                             <Text style={styles.title}>{day.event}</Text>
-                            <Text style={styles.desc}>{day.address}</Text>
+                            <Text style={styles.desc}>@ {day.address}</Text>
+                            <Text style={styles.desc}>Start from: {day.startDate}</Text>
                         </View>
                         <View style={styles.textContainer}>
                             {/* <Text style={styles.title}>{day.category}</Text> */}
                             {getDuration(day.startDate) > 0? (
-                                <Text style={styles.titlePast}>{getDuration(day.startDate)} Days</Text>
+                                <Text style={styles.dayText}>{getDuration(day.startDate)} Days </Text>
                             ): (
-                                <Text style={styles.titleFuture}>{-getDuration(day.startDate)} Days</Text>
+                                <Text style={styles.dayText}>{-getDuration(day.startDate)} Days</Text>
                             )}
                         </View>
                     </View>
-                    <View style={{
+                    {/* <View style={{
                         backgroundColor: '#A2A2A2',
                         height: 1,
                         width: '95%'}}
-                    />
+                    /> */}
                 </View>
             </TouchableOpacity>
         </GestureHandlerRootView>
@@ -64,62 +63,43 @@ const styles = StyleSheet.create({
         justifyContent:'center',
         alignItems:'center',
     },
+    pin:{
+        position:'absolute',
+        right:10,
+        top:10,
+        fontWeight:"bold",
+        borderWidth:2,
+        padding:2,
+        borderRadius:10
+    },
     root:{
+        backgroundColor:'#f5f5f5',
+        borderBottomWidth:2,
+        borderStyle:'outset',
         flexDirection:'row',
         justifyContent:'space-between',
         alignItems:'center',
         width:'100%',
-        padding: 20,
-    },
-    iconContainer:{
-        width:40,
-        height:40,
-        justifyContent:'center',
-        alignItems:'center',
-        borderRadius:10,
-        backgroundColor:'#404040',
-        marginRight:10
+        paddingVertical: 50,
+        paddingHorizontal:20
     },
     textContainer: {
         justifyContent:'flex-start',
         alignItems:'flex-start'
     },
     title:{
-        fontSize:20,
+        fontSize:25,
         marginRight:10
     },
-    titleFuture:{
-        fontSize:20,
+    dayText:{
+        fontSize:25,
         marginRight:10,
-        color:'#8B4000'
-    },
-    titlePast:{
-        fontSize:20,
-        marginRight:10,
-        color:'#008b8b'
+        color:'black',
+        fontWeight:"bold"
     },
     desc: {
+
         color:'grey'
-    },
-    rightAction:{
-        backgroundColor:'red',
-        justifyContent:'center',
-        flex:1,
-        alignItems:'flex-end',
-        borderRadius:20
-    },
-    leftAction:{
-        backgroundColor:'gray',
-        justifyContent:'center',
-        flex:1,
-        alignItems:'flex-start',
-        borderRadius:20
-    },
-    actionText:{
-        fontSize:10,
-        // paddingRight:25,
-        // paddingLeft:25,
-        color:'white'
     },
     centeredView: {
         flex: 1,

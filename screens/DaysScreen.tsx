@@ -1,5 +1,6 @@
 import {View, StyleSheet, TouchableWithoutFeedback, KeyboardAvoidingView, Platform, ScrollView, Keyboard } from "react-native";
 import DayItem from "../components/DayItem";
+import PinDayItem from "../components/PinDayItem";
 
 export default function DaysScreen ({route, navigation}: any) {
     const data = [
@@ -31,7 +32,12 @@ export default function DaysScreen ({route, navigation}: any) {
             >
                 <View style={styles.container}>
                     <ScrollView style={styles.scroll} showsVerticalScrollIndicator={false}>
-                        {data.map((day, index) => (
+                        {data.map((day, index) => 
+                        day.pinned == 1? 
+                        (
+                            <PinDayItem day={day} navigation={navigation} index={index} key={day.id}/>
+                        ):
+                        (
                             <DayItem day={day} navigation={navigation} index={index} key={day.id}/>
                         ))}
                     </ScrollView>

@@ -60,7 +60,7 @@ function RootNavigator() {
       <Stack.Screen name="Collection" component={CollectionScreen} options={{ 
         title: 'Collections',
         headerStyle: {
-          backgroundColor: '#302B2B',
+          backgroundColor: Colors.borderColor,
         },
         headerTintColor: 'white',
         headerRight: () => (
@@ -70,7 +70,7 @@ function RootNavigator() {
       <Stack.Screen name="Note" component={NoteScreen} options={{ 
         title: 'Todos',
         headerStyle: {
-          backgroundColor: '#302B2B',
+          backgroundColor: Colors.borderColor,
         },
         headerTintColor: 'white',
         headerRight: () => (
@@ -85,7 +85,7 @@ function RootNavigator() {
       <Stack.Screen name="Budget" component={BudgetScreen} options={{ 
         title: 'Our Budget Plan',
         headerStyle: {
-          backgroundColor: '#302B2B',
+          backgroundColor: Colors.borderColor,
         },
         headerTintColor: 'white',
         headerRight: () => (
@@ -101,7 +101,7 @@ function RootNavigator() {
       <Stack.Screen name="Days" component={DaysScreen} options={{ 
         title: 'Our Days Matter',
         headerStyle: {
-          backgroundColor: '#302B2B',
+          backgroundColor: Colors.borderColor,
         },
         headerTintColor: 'white',
         headerRight: () => (
@@ -117,7 +117,7 @@ function RootNavigator() {
       <Stack.Screen name="DayDetail" component={DayDetailScreen} options={{ 
         title: 'Day Detail',
         headerStyle: {
-          backgroundColor: '#302B2B',
+          backgroundColor: Colors.borderColor,
         },
         headerTintColor: 'white',
         headerRight: () => (

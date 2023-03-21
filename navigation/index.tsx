@@ -31,6 +31,7 @@ import {useDispatch, useSelector} from "react-redux"
 import { AppDispatch } from '../store';
 import CollectionModal from '../components/CollectionModal';
 import DayDetailScreen from '../screens/DayDetailScreen';
+import DayModal from '../components/DayModal';
 
 export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeName }) {
   return (
@@ -105,12 +106,7 @@ function RootNavigator() {
         },
         headerTintColor: 'white',
         headerRight: () => (
-          <TouchableOpacity
-            style = {{height: 100, marginTop: 0}}
-            onPress={() => alert('This is a button!')}  
-          >
-            <Text style = {{fontSize:30, color:'white'}}>+</Text>
-          </TouchableOpacity>
+          <DayModal/>
         ),
         }} />
 

@@ -1,6 +1,6 @@
 import {View, Text, StyleSheet, Animated, TouchableOpacity, Modal, Pressable, TextInput, Keyboard, Switch} from 'react-native';
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {db} from "../../firebase"
 import { AppDispatch, RootState } from '../../store';
@@ -9,15 +9,27 @@ import DateTimePickerModal from "react-native-modal-datetime-picker";
 import {Picker} from '@react-native-picker/picker';
 import Colors from '../../constants/Colors';
 
-export default function DayModal() {
+interface dayModalProps {
+    mode: string,
+    day: {
+        id: string
+        event: string,
+        startDate: string,
+        category: string,
+        address: string,
+        pinned: number
+    },
+    visible: boolean
+}
+export default function DayModal({mode, day, visible}:dayModalProps) {
 
     const dropDownItems = [
-        {label:'Love', value:'love'},
-        {label:'Date', value:'date'},
-        {label:'Travel', value:'travel'},
-        {label:'Home', value:'home'},
-        {label:'Life', value:'life'},
-        {label:'Other', value:'other'}
+        {label:'Love', value:'Love'},
+        {label:'Date', value:'Date'},
+        {label:'Travel', value:'Travel'},
+        {label:'Home', value:'Home'},
+        {label:'Life', value:'Life'},
+        {label:'Other', value:'Other'}
     ]
     const dispatch = useDispatch<AppDispatch>();
     const userState = useSelector((state: RootState) => state.user);
@@ -33,6 +45,17 @@ export default function DayModal() {
     const [category, setCategory] = useState("");
     const [pinned, setPinned] = useState(0);
 
+    useEffect(() => {
+        if(mode == 'edit') {
+            console.log("INININ")
+            setEvent(day.event);
+            setStartDate(day.startDate);
+            setAddress(day.address);
+            setCategory(day.category);
+            setPinned(day.pinned);
+            setModalVisible(visible)
+        }
+    },[])
     const handleDateConfirm = (date:Date) => {
         const offset = date.getTimezoneOffset(); 
         date = new Date(date.getTime() - (offset*60*1000));
@@ -53,29 +76,48 @@ export default function DayModal() {
         setDropDownPickerVisible(false);
     }
 
-    // const create = () => {
-    //     dispatch(createDay({
-    //         title: collectionName,
-    //         desc: description,
-    //         users: [userState.user.userId, userState.user.pairUser.userId]
-    //     }));
+    const create = () => {
+        dispatch(createDay({
+            event: event,
+            startDate: startDate,
+            category: category,
+            address: address,
+            pinned: pinned,
+            users: [userState.user.userId, userState.user.pairUser.userId]
+        }));
 
-    //     dayRef.add({
-    //         title: collectionName,
-    //         desc: description,
-    //         users: [userState.user.userId, userState.user.pairUser.userId]
-    //     })
+        dayRef.add({
+            event: event,
+            startDate: startDate,
+            category: category,
+            address: address,
+            pinned: pinned,
+            users: [userState.user.userId, userState.user.pairUser.userId]
+        })
 
-    //     setModalVisible(false)
-    // }
+        setModalVisible(false)
+    }
     return (
         <View>
-            <TouchableOpacity
-                style = {{position:'absolute', top:-20, right:5, zIndex:2}}
-                onPress={() => setModalVisible(true)}  
-            >
-                <Text style = {{fontSize:30, color:"white"}}>+</Text>
-            </TouchableOpacity>
+
+            {mode == "create"? 
+            (
+                <TouchableOpacity
+                    style = {{position:'absolute', top:-20, right:5, zIndex:2}}
+                    onPress={() => setModalVisible(true)}  
+                >
+                    <Text style = {{fontSize:30, color:"white"}}>+</Text>
+                </TouchableOpacity>
+            ):
+            (
+                <></>
+                // <TouchableOpacity
+                //     style = {{position:'absolute', top: -8, right:5, zIndex:2}}
+                //     onPress={() => setModalVisible(true)}  
+                // >
+                //     <Text style = {{fontSize:15, color:"white"}}></Text>
+                // </TouchableOpacity>
+            )}
 
             <Modal
                 animationType="slide"
@@ -90,6 +132,7 @@ export default function DayModal() {
                     style={styles.container} 
                     activeOpacity={1} 
                 >
+                <View style={styles.innerContainer}>
 
                 <DateTimePickerModal
                     isVisible={datePickerVisible}
@@ -108,10 +151,9 @@ export default function DayModal() {
                             position:'absolute',
                             bottom:'0%',
                             width:'100%',
-                            height:'25%',
+                            height:'30%',
                             zIndex:2,
-                            backgroundColor:'rgba(0,0,0,0.9)',
-                            borderRadius:20
+                            backgroundColor:Colors.borderColor,
                         }}
                         itemStyle={{
                             color:'white'
@@ -123,7 +165,13 @@ export default function DayModal() {
                 )}
                 <View style={styles.centeredView}>
                 <View style={styles.modalView}>
-                    <Text style={styles.modalText}>Create Your Day</Text>
+                    {mode == 'create'?
+                    (
+                        <Text style={styles.modalText}>Create Your Day</Text>
+                    ):
+                    (
+                        <Text style={styles.modalText}>Edit Your Day</Text>
+                    )}
                     <TextInput
                         placeholder="Day Event Name"
                         placeholderTextColor="gray"
@@ -159,10 +207,17 @@ export default function DayModal() {
                     </View>
                     <Pressable
                         style={[styles.button, styles.buttonClose]}
-                        onPress={() => alert("Create!")}
+                        onPress={() => create()}
                     >
-                    <Text style={styles.textStyle}>Create!</Text>
+                    {mode == 'create'?
+                    (
+                        <Text style={styles.buttonTextStyle}>Create!</Text>
+                    ):
+                    (
+                        <Text style={styles.buttonTextStyle}>Update!</Text>
+                    )}
                     </Pressable>
+                </View>
                 </View>
                 </View>
                 </TouchableOpacity>
@@ -174,6 +229,15 @@ export default function DayModal() {
 const styles = StyleSheet.create({
     container:{
         flex:1,
+        backgroundColor:Colors.borderColor
+    },
+    innerContainer:{
+        marginTop:10,
+        borderRadius:15,
+        flex:1,
+        width:'90%',
+        alignSelf:'center',
+        backgroundColor:'white'
     },
     centeredView: {
       flex: 1,
@@ -194,13 +258,19 @@ const styles = StyleSheet.create({
 
     buttonClose: {
         marginTop:100,
-        backgroundColor: '#F8EEEC',
+        backgroundColor: Colors.borderColor,
     },
     textStyle: {
-      color: 'black',
-      fontWeight:'normal',
-      textAlign: 'center',
-      fontSize:20
+        color: Colors.borderColor,
+        fontWeight:'normal',
+        textAlign: 'center',
+        fontSize:20
+    },
+    buttonTextStyle: {
+        color:'white',
+        fontWeight:'normal',
+        textAlign: 'center',
+        fontSize:20
     },
     modalText: {
       marginBottom: 40,

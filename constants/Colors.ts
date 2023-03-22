@@ -17,4 +17,5 @@ export default {
     tabIconSelected: tintColorDark,
   },
   borderColor: '#001d38',
+  alertColor: '#d0342c'
 };

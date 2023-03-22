@@ -5,6 +5,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {db} from "../../firebase"
 import { AppDispatch, RootState } from '../../store';
 import { createCollection } from '../../redux/collectionListSlice';
+import Colors from '../../constants/Colors';
 
 export default function CollectionModal() {
     const dispatch = useDispatch<AppDispatch>();
@@ -70,7 +71,7 @@ export default function CollectionModal() {
                     <Pressable
                     style={[styles.button, styles.buttonClose]}
                     onPress={() => create()}>
-                    <Text style={styles.textStyle}>Create!</Text>
+                    <Text style={styles.buttonTextStyle}>Create!</Text>
                     </Pressable>
                 </View>
                 </View>
@@ -96,14 +97,13 @@ const styles = StyleSheet.create({
       borderRadius: 20,
       padding: 35,
       alignItems: 'center',
-      shadowColor: '#000',
+      shadowColor: Colors.borderColor,
       shadowOffset: {
         width: 0,
-        height: 2,
+        height: 5,
       },
-      shadowOpacity: 0.25,
-      shadowRadius: 4,
-      elevation: 5,
+      shadowOpacity: 0.8,
+      shadowRadius: 10,
     },
     button: {
       borderRadius: 20,
@@ -113,12 +113,17 @@ const styles = StyleSheet.create({
 
     buttonClose: {
         marginTop:10,
-        backgroundColor: '#F8EEEC',
+        backgroundColor: Colors.borderColor,
     },
     textStyle: {
       color: 'black',
       fontWeight: 'bold',
       textAlign: 'center',
+    },
+    buttonTextStyle: {
+        color: 'white',
+        fontWeight: 'bold',
+        textAlign: 'center',
     },
     modalText: {
       marginBottom: 15,

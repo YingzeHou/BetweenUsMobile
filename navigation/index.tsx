@@ -50,7 +50,14 @@ export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeNa
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 function RootNavigator() {
-  const [collectionModalVisible, setCollectionModalVisible] = React.useState(false);
+  const dummyData = {
+    id:"0",
+    event:"",
+    startDate:"",
+    category:"",
+    address:"",
+    pinned:-1
+  }
   return (
     <Stack.Navigator>
       <Stack.Screen name="Splash" component={SplashScreen} options={{ headerShown: false }} />
@@ -106,7 +113,7 @@ function RootNavigator() {
         },
         headerTintColor: 'white',
         headerRight: () => (
-          <DayModal/>
+          <DayModal mode='create' day={dummyData} visible={false}/>
         ),
         }} />
 
@@ -116,14 +123,15 @@ function RootNavigator() {
           backgroundColor: Colors.borderColor,
         },
         headerTintColor: 'white',
-        headerRight: () => (
-          <TouchableOpacity
-            style = {{height: 100, marginTop:15}}
-            onPress={() => alert('This is a button!')}  
-          >
-            <Text style = {{fontSize:15,color:"white", alignSelf:'center'}}>Edit</Text>
-          </TouchableOpacity>
-        ),
+        // headerRight: () => (
+        //   // <DayModal mode='edit' day={dummyData} visible={false}/>
+        //   // <TouchableOpacity
+        //   //   style = {{height: 100, marginTop:15}}
+        //   //   onPress={() => alert('This is a button!')}  
+        //   // >
+        //   //   <Text style = {{fontSize:15,color:"white", alignSelf:'center'}}>Edit</Text>
+        //   // </TouchableOpacity>
+        // ),
         }} />
         
       <Stack.Group screenOptions={{ presentation: 'modal' }}>

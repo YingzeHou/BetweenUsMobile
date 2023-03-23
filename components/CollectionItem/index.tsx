@@ -172,7 +172,8 @@ export default function CollectionItem({collection, navigation, index, closeRow,
                 visible={deleteModalVisible}
                 onRequestClose={() => {
                 setDeleteModalVisible(!deleteModalVisible);
-                }}>
+                }}
+            >
                 
                 <TouchableOpacity 
                     style={styles.container} 
@@ -252,8 +253,8 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         marginTop: 22,
-      },
-      modalView: {
+    },
+    modalView: {
         margin: 20,
         backgroundColor: 'white',
         borderRadius: 20,
@@ -261,40 +262,40 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         shadowColor: '#000',
         shadowOffset: {
-          width: 0,
-          height: 2,
+            width: 0,
+            height: 2,
         },
         shadowOpacity: 0.25,
         shadowRadius: 4,
         elevation: 5,
-      },
-      button: {
+        },
+        button: {
         borderRadius: 20,
         padding: 10,
         elevation: 2,
-      },
-  
-      buttonClose: {
-          marginTop:10,
-          backgroundColor: '#F8EEEC',
-      },
-      textStyle: {
+    },
+
+    buttonClose: {
+        marginTop:10,
+        backgroundColor: '#F8EEEC',
+    },
+    textStyle: {
         color: 'black',
         fontWeight: 'bold',
         textAlign: 'center',
-      },
-      modalText: {
+    },
+    modalText: {
         marginBottom: 15,
         textAlign: 'center',
         fontSize:18
-      },
-      textInput: {
-          width:'50%',
-          fontSize:15,
-          marginVertical: 10,
-          borderColor:'gray',
-          borderRadius:5,
-          borderWidth:2,
-          padding:5
-      },
+    },
+    textInput: {
+        width:'50%',
+        fontSize:15,
+        marginVertical: 10,
+        borderColor:'gray',
+        borderRadius:5,
+        borderWidth:2,
+        padding:5
+    },
 })

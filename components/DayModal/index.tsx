@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {db} from "../../firebase"
 import { AppDispatch, RootState } from '../../store';
-import { createDay } from '../../redux/dayListSlice';
+import { createDay, updateDay } from '../../redux/dayListSlice';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import {Picker} from '@react-native-picker/picker';
 import Colors from '../../constants/Colors';
@@ -19,9 +19,11 @@ interface dayModalProps {
         address: string,
         pinned: number
     },
-    visible: boolean
+    index: number,
+    triggerModal: Function,
+    navigation: any
 }
-export default function DayModal({mode, day, visible}:dayModalProps) {
+export default function DayModal({mode, day, index, triggerModal, navigation}:dayModalProps) {
 
     const dropDownItems = [
         {label:'Love', value:'Love'},
@@ -47,13 +49,12 @@ export default function DayModal({mode, day, visible}:dayModalProps) {
 
     useEffect(() => {
         if(mode == 'edit') {
-            console.log("INININ")
             setEvent(day.event);
             setStartDate(day.startDate);
             setAddress(day.address);
             setCategory(day.category);
             setPinned(day.pinned);
-            setModalVisible(visible)
+            setModalVisible(true)
         }
     },[])
     const handleDateConfirm = (date:Date) => {
@@ -97,6 +98,38 @@ export default function DayModal({mode, day, visible}:dayModalProps) {
 
         setModalVisible(false)
     }
+
+    const update = () => {
+        const data = {
+            event: event,
+            startDate: startDate,
+            category: category,
+            address: address,
+            pinned: pinned,
+            users: [userState.user.userId, userState.user.pairUser.userId]
+        }
+
+        dispatch(updateDay({
+            atIndex: index,
+            event: event,
+            startDate: startDate,
+            category: category,
+            address: address,
+            pinned: pinned,
+            users: [userState.user.userId, userState.user.pairUser.userId]
+        }))
+
+        dayRef.doc(day.id)
+        .update(data)
+        .then(() => {
+
+        })
+
+        setModalVisible(false)
+        triggerModal(false)
+
+        navigation.navigate("Days", {});
+    }
     return (
         <View>
 
@@ -111,12 +144,6 @@ export default function DayModal({mode, day, visible}:dayModalProps) {
             ):
             (
                 <></>
-                // <TouchableOpacity
-                //     style = {{position:'absolute', top: -8, right:5, zIndex:2}}
-                //     onPress={() => setModalVisible(true)}  
-                // >
-                //     <Text style = {{fontSize:15, color:"white"}}></Text>
-                // </TouchableOpacity>
             )}
 
             <Modal
@@ -126,6 +153,7 @@ export default function DayModal({mode, day, visible}:dayModalProps) {
                 visible={modalVisible}
                 onRequestClose={() => {
                     setModalVisible(!modalVisible);
+                    triggerModal(false)
                 }}>
 
                 <TouchableOpacity 
@@ -205,18 +233,23 @@ export default function DayModal({mode, day, visible}:dayModalProps) {
                             style={styles.toggle}
                         />
                     </View>
-                    <Pressable
-                        style={[styles.button, styles.buttonClose]}
-                        onPress={() => create()}
-                    >
                     {mode == 'create'?
                     (
+                        <Pressable
+                            style={[styles.button, styles.buttonClose]}
+                            onPress={() => create()}
+                        >
                         <Text style={styles.buttonTextStyle}>Create!</Text>
+                        </Pressable>
                     ):
                     (
+                        <Pressable
+                            style={[styles.button, styles.buttonClose]}
+                            onPress={() => update()}
+                        >
                         <Text style={styles.buttonTextStyle}>Update!</Text>
+                        </Pressable>
                     )}
-                    </Pressable>
                 </View>
                 </View>
                 </View>

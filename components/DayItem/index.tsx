@@ -26,7 +26,9 @@ export default function DayItem({day, navigation, index}: DayItemProps) {
     return (
         <GestureHandlerRootView>
             <TouchableOpacity onPress={()=> navigation.navigate('DayDetail', {
-                day: day
+                day: day,
+                index: index,
+                navigation: navigation
             })}
             >
                 <View style={styles.container}>

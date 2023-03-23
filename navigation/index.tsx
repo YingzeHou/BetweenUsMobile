@@ -113,7 +113,7 @@ function RootNavigator() {
         },
         headerTintColor: 'white',
         headerRight: () => (
-          <DayModal mode='create' day={dummyData} visible={false}/>
+          <DayModal mode='create' day={dummyData} index={-1} triggerModal={()=>{}} navigation={null}/>
         ),
         }} />
 

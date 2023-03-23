@@ -1,38 +1,89 @@
-import { useState } from "react";
-import { View, Text, StyleSheet, Pressable} from "react-native";
+import { useCallback, useState } from "react";
+import { View, Text, StyleSheet, Pressable, TouchableOpacity} from "react-native";
 import DayCard from "../components/DayCard";
 import DayModal from "../components/DayModal";
 import Colors from "../constants/Colors";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../store";
+import { deleteDay } from "../redux/dayListSlice";
+import { db } from "../firebase";
+import { Modal } from "react-native-paper";
 
 export default function DayDetailScreen({route, navigation}: any) {
 
-    const {day} = route.params;
+    const {day, index} = route.params;
     const [modalVisible, setModalVisible] = useState(false);
 
-    const triggerModal = () => {
-        return <DayModal mode='edit' day = {day} visible = {true}/>
+    const dayRef = db.collection("days");
+    const dispatch = useDispatch<AppDispatch>();
+
+    const[deleteModalVisible, setDeleteModalVisible] = useState(false);
+
+    const triggerModal = useCallback((visible: boolean) => {
+         setModalVisible(visible)
+    }, [])
+
+    const deleteD = () => {
+        dispatch(deleteDay({
+            atIndex: index
+        }))
+
+        dayRef.doc(day.id).delete()
+        .then(()=>{})
+        .catch((error) => alert(error));
+        
+        navigation.navigate('Days', {});
     }
+
     return (
         <View style={styles.container}>
             <View style={styles.containerBox}>
                 <DayCard day = {day}/>
-                {/* <DayModal mode='edit' day = {day} visible = {true}/> */}
+                {modalVisible && <DayModal mode='edit' day = {day} index = {index} triggerModal = {triggerModal} navigation={navigation}/>}
                 <View style={styles.buttonContainer}>
                     <Pressable
                         style={({pressed}) => [styles.buttonEdit, {backgroundColor:pressed? 'gray': Colors.borderColor}]}
-                        onPress={() => triggerModal()}
+                        onPress={() => setModalVisible(true)}
                     >
                         <Text style={{color:'white'}}>Edit</Text>
                     </Pressable>
 
                     <Pressable
                         style={({pressed}) => [styles.buttonDelete, {backgroundColor:pressed? 'gray': Colors.alertColor}]}
-                        onPress={() => alert("Edit")}
+                        onPress={() => setDeleteModalVisible(true)}
                     >
                         <Text style={{color:'white'}}>Delete</Text>
                     </Pressable>
                 </View> 
             </View>
+
+            <Modal
+                animationType="slide"
+                transparent={true}
+                visible={deleteModalVisible}
+                onRequestClose={() => {
+                    setDeleteModalVisible(false);
+                }}
+            >
+                
+                <TouchableOpacity 
+                    style={styles.modalContainer} 
+                    activeOpacity={0} 
+                    onPressOut={() => {setDeleteModalVisible(false)}}
+                >
+                <View style={styles.centeredView}>
+                <View style={styles.modalView}>
+                    <Text style={styles.modalText}>Are you sure to delete?</Text>
+                    <Pressable
+                        style={({pressed}) => [styles.button, {backgroundColor:pressed? 'gray': Colors.alertColor}]}
+                        onPress={() => deleteD()}
+                    >
+                        <Text style={{color:'white'}}>Delete</Text>
+                    </Pressable>
+                </View>
+                </View>
+                </TouchableOpacity>
+            </Modal>
         </View>
     )
 }
@@ -44,6 +95,11 @@ const styles = StyleSheet.create({
         height:'100%',
         width:'100%',
         backgroundColor:'white'
+    },
+    modalContainer:{
+        height:'60%',
+        justifyContent:'center',
+        alignItems:'center',
     },
     containerBox: {
         top:'20%'
@@ -59,7 +115,7 @@ const styles = StyleSheet.create({
         alignSelf:'center',
         flexDirection:'row',
         justifyContent:'space-around',
-        alignItems:'center'
+        alignItems:'center',
     },
     buttonEdit: {
         marginTop:20,
@@ -78,5 +134,41 @@ const styles = StyleSheet.create({
         alignItems:'center',
         paddingVertical:10,
         borderRadius: 20,
-    }
+    },
+    centeredView: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        height:'100%',
+        backgroundColor:'blue'
+        // marginTop: 22,
+    },
+    modalView: {
+        // margin: 20,
+        height:'100%',
+        backgroundColor: 'white',
+        borderRadius: 20,
+        padding: 35,
+        alignItems: 'center',
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+        elevation: 5,
+    },
+    button: {
+        top:'70%',
+        borderRadius: 20,
+        padding: 10,
+        elevation: 2,
+    },
+    modalText: {
+        marginBottom: 15,
+        textAlign: 'center',
+        fontSize:18
+    },
+
 })

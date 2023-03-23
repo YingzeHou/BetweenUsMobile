@@ -1,5 +1,4 @@
 import {View, Text, StyleSheet, Animated, TouchableOpacity, Modal, Pressable, TextInput, Keyboard, Switch} from 'react-native';
-import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useEffect, useState } from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {db} from "../../firebase"
@@ -78,14 +77,6 @@ export default function DayModal({mode, day, index, triggerModal, navigation}:da
     }
 
     const create = () => {
-        dispatch(createDay({
-            event: event,
-            startDate: startDate,
-            category: category,
-            address: address,
-            pinned: pinned,
-            users: [userState.user.userId, userState.user.pairUser.userId]
-        }));
 
         dayRef.add({
             event: event,
@@ -94,6 +85,17 @@ export default function DayModal({mode, day, index, triggerModal, navigation}:da
             address: address,
             pinned: pinned,
             users: [userState.user.userId, userState.user.pairUser.userId]
+        })
+        .then((docRef) => {
+            dispatch(createDay({
+                id: docRef.id,
+                event: event,
+                startDate: startDate,
+                category: category,
+                address: address,
+                pinned: pinned,
+                users: [userState.user.userId, userState.user.pairUser.userId]
+            }));
         })
 
         setModalVisible(false)
@@ -106,29 +108,28 @@ export default function DayModal({mode, day, index, triggerModal, navigation}:da
             category: category,
             address: address,
             pinned: pinned,
-            users: [userState.user.userId, userState.user.pairUser.userId]
+            // users: [userState.user.userId, userState.user.pairUser.userId]
         }
 
-        dispatch(updateDay({
-            atIndex: index,
-            event: event,
-            startDate: startDate,
-            category: category,
-            address: address,
-            pinned: pinned,
-            users: [userState.user.userId, userState.user.pairUser.userId]
-        }))
 
         dayRef.doc(day.id)
         .update(data)
         .then(() => {
-
+            dispatch(updateDay({
+                atIndex: index,
+                event: event,
+                startDate: startDate,
+                category: category,
+                address: address,
+                pinned: pinned,
+                // users: [userState.user.userId, userState.user.pairUser.userId]
+            }))
         })
 
         setModalVisible(false)
         triggerModal(false)
 
-        navigation.navigate("Days", {});
+        navigation.navigate("Days", null);
     }
     return (
         <View>

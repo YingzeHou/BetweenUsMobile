@@ -1,4 +1,5 @@
 import {createSlice, createAsyncThunk} from "@reduxjs/toolkit"
+import { Directions } from "react-native-gesture-handler";
 import {db, auth} from "../firebase"
 
 function makeid() {
@@ -35,7 +36,7 @@ const dayRef = db.collection("days");
 
 export const fetchDays = createAsyncThunk('day/fetchDays', ()=>{
     return dayRef
-        // .orderBy('index')
+        .orderBy('pinned', 'desc')
         .get()
         .then((querySnapShot) => {
             const days: day[] = [];
@@ -78,7 +79,7 @@ const dayListSlice = createSlice({
     reducers:{
         createDay: (state, action) => {
             state.days.push({
-                id: makeid(),
+                id: action.payload.id,
                 event: action.payload.event,
                 startDate: action.payload.startDate,
                 category: action.payload.category,

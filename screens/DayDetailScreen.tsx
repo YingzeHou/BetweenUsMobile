@@ -8,6 +8,7 @@ import { AppDispatch, RootState } from "../store";
 import { deleteDay } from "../redux/dayListSlice";
 import { db } from "../firebase";
 import { Modal } from "react-native-paper";
+import { DeleteModal } from "../components/DeleteModal";
 
 export default function DayDetailScreen({route, navigation}: any) {
 
@@ -23,6 +24,10 @@ export default function DayDetailScreen({route, navigation}: any) {
          setModalVisible(visible)
     }, [])
 
+    const triggerDelModal = useCallback((visible: boolean) => {
+        setDeleteModalVisible(visible)
+    }, [])
+
     const deleteD = () => {
         dispatch(deleteDay({
             atIndex: index
@@ -32,7 +37,7 @@ export default function DayDetailScreen({route, navigation}: any) {
         .then(()=>{})
         .catch((error) => alert(error));
         
-        navigation.navigate('Days', {});
+        navigation.navigate('Days', null);
     }
 
     return (
@@ -56,34 +61,7 @@ export default function DayDetailScreen({route, navigation}: any) {
                     </Pressable>
                 </View> 
             </View>
-
-            <Modal
-                animationType="slide"
-                transparent={true}
-                visible={deleteModalVisible}
-                onRequestClose={() => {
-                    setDeleteModalVisible(false);
-                }}
-            >
-                
-                <TouchableOpacity 
-                    style={styles.modalContainer} 
-                    activeOpacity={0} 
-                    onPressOut={() => {setDeleteModalVisible(false)}}
-                >
-                <View style={styles.centeredView}>
-                <View style={styles.modalView}>
-                    <Text style={styles.modalText}>Are you sure to delete?</Text>
-                    <Pressable
-                        style={({pressed}) => [styles.button, {backgroundColor:pressed? 'gray': Colors.alertColor}]}
-                        onPress={() => deleteD()}
-                    >
-                        <Text style={{color:'white'}}>Delete</Text>
-                    </Pressable>
-                </View>
-                </View>
-                </TouchableOpacity>
-            </Modal>
+            {deleteModalVisible && <DeleteModal setVisibleCallback={triggerDelModal} operation={deleteD} page="day" other={null}/>}
         </View>
     )
 }

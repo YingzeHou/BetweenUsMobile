@@ -1,12 +1,15 @@
 import {View, Text, StyleSheet, Animated, TouchableOpacity, Modal, TextInput, Pressable} from 'react-native';
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import {Swipeable, GestureHandlerRootView} from "react-native-gesture-handler"
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {db, auth} from "../../firebase"
 import { AppDispatch, RootState } from '../../store';
 import {useDispatch, useSelector} from 'react-redux';
 import { updateCollection, deleteCollection } from "../../redux/collectionListSlice";
 import { casDeleteTodos } from '../../redux/todoListSlice';
+import { DeleteModal } from '../DeleteModal';
+import CollectionModal from '../CollectionModal';
+
 
 interface CollectionItemProps {
     collection: {
@@ -49,37 +52,19 @@ export default function CollectionItem({collection, navigation, index, closeRow,
 
     const [editModalVisible, setEditModalVisible] = useState(false)
     const [deleteModalVisible, setDeleteModalVisible] = useState(false)
-    const [collectionName, setCollectionName] = useState(collection.title)
-    const [description, setDescription] = useState(collection.desc)
 
     const dispatch = useDispatch<AppDispatch>();
     const userState = useSelector((state: RootState) => state.user);
 
     const collectionRef = db.collection('collections');
 
-    const update = () => {
-        const data = {
-            title: collectionName,
-            desc: description,
-        }
+    const triggerDelModal = useCallback((visible: boolean) => {
+        setDeleteModalVisible(visible)
+    }, [])
 
-        dispatch(updateCollection({
-            atIndex: index,
-            title: collectionName,
-            desc: description,
-            users: [userState.user.userId, userState.user.pairUser.userId]
-        }))
-
-        collectionRef.doc(collection.id)
-        .update(data)
-        .then(()=>{
-            
-        })
-        .catch((error) => alert(error));
-
-        setEditModalVisible(false)
-        closeRow(index, "absolute")
-    }
+    const triggerEditModal = useCallback((visible: boolean) => {
+        setEditModalVisible(visible)
+    }, [])
 
     const deleteCol = () => {
         dispatch(deleteCollection({
@@ -125,74 +110,10 @@ export default function CollectionItem({collection, navigation, index, closeRow,
                     </View>
                 </TouchableOpacity>
             </Swipeable>
+            
+            {editModalVisible && <CollectionModal mode='edit' collection={collection} index={index} triggerModal={triggerEditModal} navigation={navigation} other={{closeRow: closeRow, index: index}}/>}
 
-            <Modal
-                animationType="slide"
-                transparent={true}
-                visible={editModalVisible}
-                onRequestClose={() => {
-                setEditModalVisible(!editModalVisible);
-                }}>
-                
-                <TouchableOpacity 
-                    style={styles.container} 
-                    activeOpacity={1} 
-                    onPressOut={() => {setEditModalVisible(false), closeRow(index, "absolute")}}
-                >
-                <View style={styles.centeredView}>
-                <View style={styles.modalView}>
-                    <Text style={styles.modalText}>Update Collection</Text>
-                    <TextInput
-                        placeholder="Collection Name"
-                        placeholderTextColor="gray"
-                        value={collectionName}
-                        onChangeText = {setCollectionName}
-                        style={styles.textInput}
-                    />
-                    <TextInput
-                        placeholder="Description"
-                        placeholderTextColor="gray"
-                        value={description}
-                        onChangeText = {setDescription}
-                        style={styles.textInput}
-                    />
-                    <Pressable
-                    style={[styles.button, styles.buttonClose]}
-                    onPress={() => update()}>
-                    <Text style={styles.textStyle}>Update!</Text>
-                    </Pressable>
-                </View>
-                </View>
-                </TouchableOpacity>
-            </Modal>
-
-            <Modal
-                animationType="slide"
-                transparent={true}
-                visible={deleteModalVisible}
-                onRequestClose={() => {
-                setDeleteModalVisible(!deleteModalVisible);
-                }}
-            >
-                
-                <TouchableOpacity 
-                    style={styles.container} 
-                    activeOpacity={1} 
-                    onPressOut={() => {setDeleteModalVisible(false), closeRow(index, "absolute")}}
-                >
-                <View style={styles.centeredView}>
-                <View style={styles.modalView}>
-                    <Text style={styles.modalText}>Deletion of collection will delete all todos within</Text>
-                    <Text style={styles.modalText}>Are you sure to delete?</Text>
-                    <Pressable
-                    style={[styles.button, styles.buttonClose]}
-                    onPress={() => deleteCol()}>
-                        <Text style={styles.textStyle}>Delete</Text>
-                    </Pressable>
-                </View>
-                </View>
-                </TouchableOpacity>
-            </Modal>
+            {deleteModalVisible && <DeleteModal setVisibleCallback={triggerDelModal} operation={deleteCol} page="collection" other={{closeRow: closeRow, index: index}}/>}
         </GestureHandlerRootView>
     )
 }

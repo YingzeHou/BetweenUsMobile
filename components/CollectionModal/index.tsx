@@ -1,13 +1,25 @@
 import {View, Text, StyleSheet, Animated, TouchableOpacity, Modal, Pressable, TextInput} from 'react-native';
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {db} from "../../firebase"
 import { AppDispatch, RootState } from '../../store';
-import { createCollection } from '../../redux/collectionListSlice';
+import { createCollection, updateCollection } from '../../redux/collectionListSlice';
 import Colors from '../../constants/Colors';
 
-export default function CollectionModal() {
+interface CollectionModalProps {
+    mode: string,
+    collection: {
+        id: string,
+        title: string,
+        desc: string
+    },
+    index: number,
+    triggerModal: Function,
+    navigation: any,
+    other: any
+}
+export default function CollectionModal({mode, collection, index, triggerModal, navigation, other}: CollectionModalProps) {
     const dispatch = useDispatch<AppDispatch>();
     const userState = useSelector((state: RootState) => state.user);
     const collectionRef = db.collection("collections");
@@ -15,21 +27,56 @@ export default function CollectionModal() {
     const [collectionName, setCollectionName] = useState("");
     const [description, setDescription] = useState("");
 
+    useEffect(() => {
+        if(mode == 'edit') {
+            setCollectionName(collection.title);
+            setDescription(collection.desc);
+            setModalVisible(true)
+        }
+    },[])
     const create = () => {
-        dispatch(createCollection({
-            title: collectionName,
-            desc: description,
-            users: [userState.user.userId, userState.user.pairUser.userId]
-        }));
 
         collectionRef.add({
             title: collectionName,
             desc: description,
             users: [userState.user.userId, userState.user.pairUser.userId]
         })
+        .then((docRef) => {
+            dispatch(createCollection({
+                id: docRef.id,
+                title: collectionName,
+                desc: description,
+                users: [userState.user.userId, userState.user.pairUser.userId]
+            }));
+        })
 
         setModalVisible(false)
     }
+
+    const update = () => {
+        const data = {
+            title: collectionName,
+            desc: description,
+        }
+
+        dispatch(updateCollection({
+            atIndex: index,
+            title: collectionName,
+            desc: description,
+            users: [userState.user.userId, userState.user.pairUser.userId]
+        }))
+
+        collectionRef.doc(collection.id)
+        .update(data)
+        .then(()=>{
+            
+        })
+        .catch((error) => alert(error));
+
+        setModalVisible(false)
+        other.closeRow(index, "absolute")
+    }
+
     return (
         <View>
             <TouchableOpacity
@@ -43,17 +90,17 @@ export default function CollectionModal() {
                 transparent={true}
                 visible={modalVisible}
                 onRequestClose={() => {
-                setModalVisible(!modalVisible);
+                    setModalVisible(!modalVisible);
                 }}>
 
                 <TouchableOpacity 
                     style={styles.container} 
                     activeOpacity={1} 
-                    onPressOut={() => {setModalVisible(false)}}
+                    onPressOut={mode=='create'? () => {setModalVisible(false)}: () => {triggerModal(false), other.closeRow(other.index, "absolute")}}
                 >
                 <View style={styles.centeredView}>
                 <View style={styles.modalView}>
-                    <Text style={styles.modalText}>Create Collection</Text>
+                    <Text style={styles.modalText}>{mode=='create'? "Create Collection": "Edit Collection"}</Text>
                     <TextInput
                         placeholder="Collection Name"
                         placeholderTextColor="gray"
@@ -68,11 +115,23 @@ export default function CollectionModal() {
                         onChangeText = {setDescription}
                         style={styles.textInput}
                     />
-                    <Pressable
-                    style={[styles.button, styles.buttonClose]}
-                    onPress={() => create()}>
-                    <Text style={styles.buttonTextStyle}>Create!</Text>
-                    </Pressable>
+                    {mode == 'create'?
+                    (
+                        <Pressable
+                            style={({pressed}) => [styles.button, {backgroundColor:pressed? 'gray': Colors.borderColor}]}
+                            onPress={() => create()}
+                        >
+                        <Text style={styles.buttonTextStyle}>Create!</Text>
+                        </Pressable>
+                    ):
+                    (
+                        <Pressable
+                            style={({pressed}) => [styles.button, {backgroundColor:pressed? 'gray': Colors.borderColor}]}
+                            onPress={() => update()}
+                        >
+                        <Text style={styles.buttonTextStyle}>Update!</Text>
+                        </Pressable>
+                    )}
                 </View>
                 </View>
                 </TouchableOpacity>

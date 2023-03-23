@@ -28,7 +28,7 @@ export default function DayItem({day, navigation, index}: DayItemProps) {
             <TouchableOpacity onPress={()=> navigation.navigate('DayDetail', {
                 day: day,
                 index: index,
-                navigation: navigation
+                // navigation: navigation
             })}
             >
                 <View style={styles.container}>

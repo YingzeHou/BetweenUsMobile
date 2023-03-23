@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {db} from "../../firebase"
 import { AppDispatch, RootState } from '../../store';
-import { createDay, updateDay } from '../../redux/dayListSlice';
+import { createDay, fetchDays, updateDay } from '../../redux/dayListSlice';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import {Picker} from '@react-native-picker/picker';
 import Colors from '../../constants/Colors';
@@ -34,6 +34,7 @@ export default function DayModal({mode, day, index, triggerModal, navigation}:da
     ]
     const dispatch = useDispatch<AppDispatch>();
     const userState = useSelector((state: RootState) => state.user);
+    const dayState = useSelector((state: RootState) => state.dayList);
     const dayRef = db.collection("days");
     const [modalVisible, setModalVisible] = useState(false);
     const [event, setEvent] = useState("");
@@ -76,8 +77,28 @@ export default function DayModal({mode, day, index, triggerModal, navigation}:da
         setDropDownPickerVisible(false);
     }
 
+    const checkPin = () => {
+        const pinDay = dayState.days[0]!=null? dayState.days[0].pinned==1? dayState.days[0]: null: null;
+        if(pinDay!=null && pinned == 1) {
+            const pinDayId = pinDay.id;
+            dayRef.doc(pinDayId).update({
+                pinned: 0
+            })
+            .then(()=> {
+                dispatch(updateDay({
+                    atIndex: 0,
+                    event: pinDay.event,
+                    startDate: pinDay.startDate,
+                    category: pinDay.category,
+                    address: pinDay.address,
+                    pinned: 0,
+                    users: [userState.user.userId, userState.user.pairUser.userId]
+                }))
+            })
+        }
+    }
     const create = () => {
-
+        checkPin();
         dayRef.add({
             event: event,
             startDate: startDate,
@@ -102,6 +123,7 @@ export default function DayModal({mode, day, index, triggerModal, navigation}:da
     }
 
     const update = () => {
+        checkPin();
         const data = {
             event: event,
             startDate: startDate,
@@ -111,25 +133,16 @@ export default function DayModal({mode, day, index, triggerModal, navigation}:da
             // users: [userState.user.userId, userState.user.pairUser.userId]
         }
 
-
         dayRef.doc(day.id)
         .update(data)
         .then(() => {
-            dispatch(updateDay({
-                atIndex: index,
-                event: event,
-                startDate: startDate,
-                category: category,
-                address: address,
-                pinned: pinned,
-                // users: [userState.user.userId, userState.user.pairUser.userId]
-            }))
+            dispatch(fetchDays())
+            .then(() => {
+                setModalVisible(false)
+                triggerModal(false)
+                navigation.navigate("Days", null);
+            })
         })
-
-        setModalVisible(false)
-        triggerModal(false)
-
-        navigation.navigate("Days", null);
     }
     return (
         <View>
@@ -237,7 +250,7 @@ export default function DayModal({mode, day, index, triggerModal, navigation}:da
                     {mode == 'create'?
                     (
                         <Pressable
-                            style={[styles.button, styles.buttonClose]}
+                            style={({pressed}) => [styles.button, {backgroundColor:pressed? 'gray': Colors.borderColor}]}
                             onPress={() => create()}
                         >
                         <Text style={styles.buttonTextStyle}>Create!</Text>
@@ -245,7 +258,8 @@ export default function DayModal({mode, day, index, triggerModal, navigation}:da
                     ):
                     (
                         <Pressable
-                            style={[styles.button, styles.buttonClose]}
+                            style={({pressed}) => [styles.button, {backgroundColor:pressed? 'gray': Colors.borderColor}]}
+                            // style={[styles.button, styles.buttonClose]}
                             onPress={() => update()}
                         >
                         <Text style={styles.buttonTextStyle}>Update!</Text>

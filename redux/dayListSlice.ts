@@ -92,12 +92,12 @@ const dayListSlice = createSlice({
         updateDay: (state, action) => {
             const newDays = state.days.map((day, i) => {
                 if(i==action.payload.atIndex) {
-                    day.event = action.payload.event;
-                    day.startDate = action.payload.startDate;
-                    day.category = action.payload.category;
-                    day.address = action.payload.address;
-                    day.pinned = action.payload.pinned;
-                    day.users = action.payload.users;
+                    day.event = action.payload.event
+                    day.startDate = action.payload.startDate
+                    day.category = action.payload.category
+                    day.address = action.payload.address
+                    day.pinned = action.payload.pinned
+                    day.users = action.payload.users
                     return day;
                 }
                 else{

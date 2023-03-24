@@ -31,6 +31,7 @@ import {useDispatch, useSelector} from "react-redux"
 import { AppDispatch } from '../store';
 import CollectionModal from '../components/CollectionModal';
 import DayDetailScreen from '../screens/DayDetailScreen';
+import DayModal from '../components/DayModal';
 
 export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeName }) {
   return (
@@ -49,7 +50,20 @@ export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeNa
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 function RootNavigator() {
-  const [collectionModalVisible, setCollectionModalVisible] = React.useState(false);
+  const dummyDayData = {
+    id:"0",
+    event:"",
+    startDate:"",
+    category:"",
+    address:"",
+    pinned:-1
+  }
+
+  const dummyColData = {
+    id:"0",
+    title:"",
+    desc:""
+  }
   return (
     <Stack.Navigator>
       <Stack.Screen name="Splash" component={SplashScreen} options={{ headerShown: false }} />
@@ -60,17 +74,17 @@ function RootNavigator() {
       <Stack.Screen name="Collection" component={CollectionScreen} options={{ 
         title: 'Collections',
         headerStyle: {
-          backgroundColor: '#302B2B',
+          backgroundColor: Colors.borderColor,
         },
         headerTintColor: 'white',
         headerRight: () => (
-          <CollectionModal/>
+          <CollectionModal mode='create' collection={dummyColData} index={-1} triggerModal={()=>{}} navigation={null} other={null}/>
         ),
         }} />
       <Stack.Screen name="Note" component={NoteScreen} options={{ 
         title: 'Todos',
         headerStyle: {
-          backgroundColor: '#302B2B',
+          backgroundColor: Colors.borderColor,
         },
         headerTintColor: 'white',
         headerRight: () => (
@@ -85,7 +99,7 @@ function RootNavigator() {
       <Stack.Screen name="Budget" component={BudgetScreen} options={{ 
         title: 'Our Budget Plan',
         headerStyle: {
-          backgroundColor: '#302B2B',
+          backgroundColor: Colors.borderColor,
         },
         headerTintColor: 'white',
         headerRight: () => (
@@ -101,33 +115,20 @@ function RootNavigator() {
       <Stack.Screen name="Days" component={DaysScreen} options={{ 
         title: 'Our Days Matter',
         headerStyle: {
-          backgroundColor: '#302B2B',
+          backgroundColor: Colors.borderColor,
         },
         headerTintColor: 'white',
         headerRight: () => (
-          <TouchableOpacity
-            style = {{height: 100, marginTop: 0}}
-            onPress={() => alert('This is a button!')}  
-          >
-            <Text style = {{fontSize:30, color:'white'}}>+</Text>
-          </TouchableOpacity>
+          <DayModal mode='create' day={dummyDayData} index={-1} triggerModal={()=>{}} navigation={null}/>
         ),
         }} />
 
       <Stack.Screen name="DayDetail" component={DayDetailScreen} options={{ 
         title: 'Day Detail',
         headerStyle: {
-          backgroundColor: '#302B2B',
+          backgroundColor: Colors.borderColor,
         },
         headerTintColor: 'white',
-        headerRight: () => (
-          <TouchableOpacity
-            style = {{height: 100, marginTop:15}}
-            onPress={() => alert('This is a button!')}  
-          >
-            <Text style = {{fontSize:15,color:"white", alignSelf:'center'}}>Edit</Text>
-          </TouchableOpacity>
-        ),
         }} />
         
       <Stack.Group screenOptions={{ presentation: 'modal' }}>

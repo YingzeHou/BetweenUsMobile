@@ -1,5 +1,5 @@
-import React from 'react';
-import { ImageBackground, Pressable, StyleSheet, TouchableOpacity } from 'react-native';
+import React, { useState } from 'react';
+import { Animated, ImageBackground, Pressable, StyleSheet, TouchableOpacity } from 'react-native';
 
 import EditScreenInfo from '../components/EditScreenInfo';
 import HomeComponent from '../components/HomeComponent';
@@ -9,9 +9,10 @@ import { RootTabScreenProps } from '../types';
 import { useEffect } from 'react';
 import { fetchUser } from '../redux/userSlice';
 import {auth} from "../firebase"
-import { AppDispatch } from '../store';
-import {useDispatch} from 'react-redux'
+import { AppDispatch, RootState } from '../store';
+import {useDispatch, useSelector} from 'react-redux'
 import DayCard from '../components/DayCard';
+import { fetchDays } from '../redux/dayListSlice';
 
 const day = {
   id:'1',
@@ -23,14 +24,28 @@ const day = {
 }
 export default function TabOneScreen({ navigation }: RootTabScreenProps<'TabOne'>) {
   const dispatch = useDispatch<AppDispatch>();
+  const screenState = useSelector((state: RootState) => state.dayList)
   useEffect(() => {
     dispatch(fetchUser(auth.currentUser?.uid!))
+    dispatch(fetchDays())
   },[]) 
+
+  const [fadeAnim] = useState(new Animated.Value(0));
+  useEffect(() => {
+    Animated.timing(fadeAnim, {
+      toValue: 1,
+      duration: 1000,
+      useNativeDriver: true,
+    }).start();
+  }, [])
   
   return (
     <ImageBackground source={require('../assets/images/bg.jpeg')} resizeMode="cover" style={styles.container} imageStyle={{opacity:1}}>
-      {/* <HomeComponent title='Notes' logoPath='../assets/images/notelogo.png'></HomeComponent> */}
-      <DayCard day={day}/>
+      <Animated.View
+        style={{opacity: fadeAnim}}
+      >
+      {screenState.days!=null && screenState.days[0]!=null && <DayCard day={screenState.days[0]}/>}
+      </Animated.View>
       <View style={styles.homecontainer}>
         <TouchableOpacity onPress={()=> navigation.navigate('Collection')}>
           <HomeComponent title='Note' type='note'></HomeComponent>

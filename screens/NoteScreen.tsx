@@ -7,6 +7,7 @@ import { AppDispatch, RootState } from "../store";
 import { createTodo, deleteTodo, fetchTodos, updateTodo } from "../redux/todoListSlice";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { fetchPair } from "../redux/pairSlice";
+import Colors from "../constants/Colors";
 
 export default function NoteScreen({route, navigation}: any) {
     const dispatch = useDispatch<AppDispatch>();
@@ -85,7 +86,7 @@ export default function NoteScreen({route, navigation}: any) {
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
         <View style={{height:'100%', width:'100%', backgroundColor:'white'}}>
-                {screenState.loading && (<Text>LOADING...</Text>)}
+                {screenState.loading && (<Text style={{alignSelf:'center', top:'40%'}}>LOADING...</Text>)}
                 {screenState.error && (<Text>ERROR</Text>)}
                 {!screenState.loading && !screenState.error && (
                     <KeyboardAvoidingView
@@ -128,12 +129,14 @@ export default function NoteScreen({route, navigation}: any) {
                         <TouchableOpacity style={{
                             justifyContent:'center', 
                             alignItems:'center', 
-                            backgroundColor:'#8A8681', 
+                            backgroundColor: Colors.borderColor, 
+                            width:'90%',
+                            alignSelf:'center',
                             borderRadius:5, 
                             padding:10, 
                             marginBottom:10
                         }} onPress={saveToCloud}>
-                            <Text style={{color:'black', fontWeight:'bold', fontSize:20}}>Save Changes</Text>
+                            <Text style={{color:'white', fontWeight:'bold', fontSize:20}}>Save Changes</Text>
                         </TouchableOpacity>
                         {/* <Button color={"black"} title="Save Changes" onPress={saveToCloud}/> */}
                     </KeyboardAvoidingView>

@@ -1,6 +1,10 @@
-import {View, StyleSheet, TouchableWithoutFeedback, KeyboardAvoidingView, Platform, ScrollView, Keyboard } from "react-native";
+import { useCallback, useEffect, useState } from "react";
+import {View, StyleSheet, TouchableWithoutFeedback, KeyboardAvoidingView, Platform, ScrollView, Keyboard, RefreshControl } from "react-native";
+import { useDispatch, useSelector } from "react-redux";
 import DayItem from "../components/DayItem";
 import PinDayItem from "../components/PinDayItem";
+import { fetchDays } from "../redux/dayListSlice";
+import { AppDispatch, RootState } from "../store";
 
 export default function DaysScreen ({route, navigation}: any) {
     const data = [
@@ -22,6 +26,21 @@ export default function DaysScreen ({route, navigation}: any) {
         },
 
     ]
+
+    const dispatch = useDispatch<AppDispatch>();
+    const screenState = useSelector((state: RootState) => state.dayList)
+
+    useEffect(() => {
+        dispatch(fetchDays());
+    },[])
+
+    const [refreshing, setRefreshing] = useState(false);
+
+    const onRefresh = useCallback(() => {
+        setRefreshing(true);
+        dispatch(fetchDays()).then(()=>{setRefreshing(false);});
+    }, []);
+
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
             {/* <ImageBackground source={require('../assets/images/todobg.png')} resizeMode="cover" style={styles.container} imageStyle={{opacity:1}}> */}
@@ -31,8 +50,13 @@ export default function DaysScreen ({route, navigation}: any) {
                 style={styles.formContainer}
             >
                 <View style={styles.container}>
-                    <ScrollView style={styles.scroll} showsVerticalScrollIndicator={false}>
-                        {data.map((day, index) => 
+                    <ScrollView 
+                        style={styles.scroll} 
+                        showsVerticalScrollIndicator={false}
+                        refreshControl = {
+                            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+                        }>
+                        {screenState.days.map((day, index) => 
                         day.pinned == 1? 
                         (
                             <PinDayItem day={day} navigation={navigation} index={index} key={day.id}/>

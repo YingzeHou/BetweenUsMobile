@@ -48,7 +48,6 @@ export const fetchCollections = createAsyncThunk('collection/fetchCollections', 
                         users: users,
                     })
     
-                    // prevIds.push(doc.id)
                 }
             })
             return {collections};
@@ -76,7 +75,7 @@ const collectionListSlice = createSlice({
     reducers:{
         createCollection: (state, action) => {
             state.collections.push({
-                id: makeid(),
+                id: action.payload.id,
                 title:action.payload.title,
                 desc: action.payload.desc,
                 users:action.payload.users

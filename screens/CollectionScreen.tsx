@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { View, StyleSheet, TouchableWithoutFeedback, Keyboard, ImageBackground, KeyboardAvoidingView, Platform, Text, ScrollView, Modal, TouchableOpacity } from "react-native";
+import { useState, useEffect, useCallback } from "react";
+import { View, StyleSheet, TouchableWithoutFeedback, Keyboard, ImageBackground, KeyboardAvoidingView, Platform, Text, ScrollView, Modal, TouchableOpacity, RefreshControl } from "react-native";
 import CollectionItem from "../components/CollectionItem";
 import { AppDispatch, RootState } from "../store";
 import {useDispatch, useSelector} from 'react-redux';
@@ -13,6 +13,13 @@ export default function CollectionScreen({route, navigation}: any ) {
     useEffect(() => {
         dispatch(fetchCollections());
     },[])
+
+    const [refreshing, setRefreshing] = useState(false);
+
+    const onRefresh = useCallback(() => {
+        setRefreshing(true);
+        dispatch(fetchCollections()).then(()=>{setRefreshing(false);});
+    }, []);
 
     const [modalVisible, setModalVisible] = useState(false);
     let row: Array<any> = [];
@@ -40,7 +47,12 @@ export default function CollectionScreen({route, navigation}: any ) {
                 style={styles.formContainer}
             >
                 <View style={styles.container}>
-                    <ScrollView style={styles.scroll} showsVerticalScrollIndicator={false}>
+                    <ScrollView 
+                        style={styles.scroll} 
+                        showsVerticalScrollIndicator={false}
+                        refreshControl = {
+                            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+                        }>
                         {screenState.collections.map((collection, index) => (
                             <CollectionItem collection={collection} navigation={navigation} index={index} closeRow = {closeRow} setRow = {setRow} key={collection.id}/>
                         ))}

@@ -26,7 +26,8 @@ export default function PinDayItem({day, navigation, index}: DayItemProps) {
     return (
         <GestureHandlerRootView>
             <TouchableOpacity onPress={()=> navigation.navigate('DayDetail', {
-                day: day
+                day: day,
+                index: index
             })}
             >
                 <View style={styles.container}>

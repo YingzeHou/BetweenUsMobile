@@ -1,5 +1,4 @@
 import {createSlice, createAsyncThunk} from "@reduxjs/toolkit"
-import { useState } from "react";
 import {db, auth} from "../firebase"
 
 function makeid() {

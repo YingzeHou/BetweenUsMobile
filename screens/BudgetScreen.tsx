@@ -1,9 +1,24 @@
+import { useCallback, useState } from "react";
 import { Text, View, StyleSheet } from "react-native";
+import { BudgetNavBar } from "../components/BudgetNavBar";
+import { BudgetBookScreen } from "./BudgetBookScreen";
+import { BudgetStatScreen } from "./BudgetStatScreen";
 
 export default function BudgetScreen () {
+    const [tabNum, setTabNum] = useState(0);
+    const switchTab = useCallback((tabNum: number) => {
+        setTabNum(tabNum)
+    }, [])
     return (
         <View style = {styles.container}>
-            <Text>Budget Screen</Text>
+            <BudgetNavBar switchTab={switchTab}/>
+            {tabNum == 0? 
+            (
+                <BudgetBookScreen/>
+            ):
+            (
+                <BudgetStatScreen/>
+            )}
         </View>
     )
 }

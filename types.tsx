@@ -19,6 +19,7 @@ export type RootStackParamList = {
   NotFound: undefined;
   Note: undefined;
   Budget: undefined;
+  BudgetBookDetail: undefined;
   Days: undefined;
   DayDetail: undefined;
   Collection: undefined;

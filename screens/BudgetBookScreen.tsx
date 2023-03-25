@@ -1,9 +1,80 @@
-import { Text, View } from "react-native";
+import { useCallback, useState } from "react";
+import { Text, View, StyleSheet, TouchableWithoutFeedback, Keyboard, KeyboardAvoidingView, Platform, ScrollView, RefreshControl } from "react-native";
+import { BudgetBookItem } from "../components/BudgetBookItem";
+import Colors from "../constants/Colors";
 
-export function BudgetBookScreen() {
+export function BudgetBookScreen({route, navigation}: any) {
+    const data = [
+        {
+            id:'1',
+            name: 'Travel Book',
+            date: '2019-01-02'
+        },
+        {
+            id:'2',
+            name: 'Education Book',
+            date: '2019-09-20'
+        },
+        {
+            id:'3',
+            name: 'Asset Book',
+            date: '2022-03-14'
+        }
+    ]
+    const [refreshing, setRefreshing] = useState(false);
+
+    const onRefresh = useCallback(() => {
+        setRefreshing(true);
+        setTimeout(() => {
+            setRefreshing(false);
+          }, 2000);
+    }, []);
     return (
-        <View>
-            <Text style={{alignSelf:'center'}}>BOOK SCREEN</Text>
-        </View>
+            <KeyboardAvoidingView
+                behavior={Platform.OS === "ios" ? "padding" : "height"} 
+                keyboardVerticalOffset={Platform.OS === "ios"? 100: 0}
+                style={styles.formContainer}
+            >
+            <View style={styles.container}>
+                <ScrollView
+                    style={styles.scroll}
+                    showsVerticalScrollIndicator={false}
+                    refreshControl = {
+                        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+                    }
+                >
+                    {data.map((book, i) =>
+                        <BudgetBookItem key={book.id} book={book} navigation={navigation}/>
+                    )}
+                </ScrollView>
+            </View>
+            </KeyboardAvoidingView>
     )
 }
+
+const styles = StyleSheet.create({
+    formContainer: {
+        flex:1,
+        width:'95%',
+        alignSelf:'center',
+        height:'100%',
+        top:0,
+        backgroundColor:'white'
+    },
+    container:{
+        height:'100%',
+        width:'100%',
+        borderWidth:2,
+        borderColor: Colors.borderColor,
+        alignSelf:'center',
+        borderRadius:10,
+        flex:1,
+        justifyContent:'center',
+        alignItems:'center'
+    },
+    scroll:{
+        flex: 1,
+        width:'100%',
+        height:'100%',
+    },
+})

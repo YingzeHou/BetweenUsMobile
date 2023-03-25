@@ -11,6 +11,7 @@ import {db, auth, storage} from "../firebase"
 import * as ImagePicker from 'expo-image-picker';
 import { fetchUser, userInfo } from '../redux/userSlice';
 import AccountEntry from '../components/AccountItem';
+import Colors from '../constants/Colors';
 
 export default function TabThreeScreen({route, navigation}: any) {
   const user = auth.currentUser;
@@ -199,6 +200,7 @@ const styles = StyleSheet.create({
     top:0,
     flexDirection:'row',
     backgroundColor:'#EDEDED',
+    // backgroundColor: 'rgba(0,29,56, .8)',
     justifyContent:'center',
     alignItems:'center'
   },

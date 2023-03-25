@@ -32,6 +32,7 @@ import { AppDispatch } from '../store';
 import CollectionModal from '../components/CollectionModal';
 import DayDetailScreen from '../screens/DayDetailScreen';
 import DayModal from '../components/DayModal';
+import { BudgetBookDetailScreen } from '../screens/BudgetBookDetailScreen';
 
 export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeName }) {
   return (
@@ -72,7 +73,7 @@ function RootNavigator() {
       <Stack.Screen name="Root" component={BottomTabNavigator} options={{ headerShown: false }} />
       <Stack.Screen name="NotFound" component={NotFoundScreen} options={{ title: 'Oops!' }} />
       <Stack.Screen name="Collection" component={CollectionScreen} options={{ 
-        title: 'Collections',
+        title: 'Our Collections',
         headerStyle: {
           backgroundColor: Colors.borderColor,
         },
@@ -87,33 +88,41 @@ function RootNavigator() {
           backgroundColor: Colors.borderColor,
         },
         headerTintColor: 'white',
-        headerRight: () => (
-          <TouchableOpacity
-            style = {{height: 100, marginTop: -5}}
-            onPress={() => alert('This is a button!')}  
-          >
-            <Text style = {{fontSize:30, color:'white'}}>...</Text>
-          </TouchableOpacity>
-        ),
+        // headerRight: () => (
+        //   <TouchableOpacity
+        //     style = {{height: 100, marginTop: -5}}
+        //     onPress={() => alert('This is a button!')}  
+        //   >
+        //     <Text style = {{fontSize:30, color:'white'}}>...</Text>
+        //   </TouchableOpacity>
+        // ),
         }} />
       <Stack.Screen name="Budget" component={BudgetScreen} options={{ 
-        title: 'Our Budget Plan',
+        title: 'Our Budget',
         headerStyle: {
           backgroundColor: Colors.borderColor,
         },
         headerTintColor: 'white',
         headerRight: () => (
           <TouchableOpacity
-            style = {{height: 100, marginTop: -5}}
+            style = {{height: 100}}
             onPress={() => alert('This is a button!')}  
           >
-            <Text style = {{fontSize:30}}>...</Text>
+            <Text style = {{fontSize:30, color:'white'}}>+</Text>
           </TouchableOpacity>
         ),
         }} />
+      
+      <Stack.Screen name="BudgetBookDetail" component={BudgetBookDetailScreen} options={{ 
+        title: 'Budget Detail',
+        headerStyle: {
+          backgroundColor: Colors.borderColor,
+        },
+        headerTintColor: 'white',
+      }} />
 
       <Stack.Screen name="Days" component={DaysScreen} options={{ 
-        title: 'Our Days Matter',
+        title: 'Our Days',
         headerStyle: {
           backgroundColor: Colors.borderColor,
         },
@@ -183,7 +192,7 @@ function BottomTabNavigator() {
           headerShown: false,
         })}
       />
-      <BottomTab.Screen
+      {/* <BottomTab.Screen
         name="TabTwo"
         component={TabTwoScreen}
         options={{
@@ -191,7 +200,7 @@ function BottomTabNavigator() {
           headerShown: false,
           // tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
         }}
-      />
+      /> */}
       <BottomTab.Screen
         name="TabThree"
         component={TabThreeScreen}

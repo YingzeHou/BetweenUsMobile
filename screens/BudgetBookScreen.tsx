@@ -1,7 +1,10 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Text, View, StyleSheet, TouchableWithoutFeedback, Keyboard, KeyboardAvoidingView, Platform, ScrollView, RefreshControl } from "react-native";
+import { useDispatch, useSelector } from "react-redux";
 import { BudgetBookItem } from "../components/BudgetBookItem";
 import Colors from "../constants/Colors";
+import { fetchBudgetBooks } from "../redux/budgetbookListSlice";
+import { AppDispatch, RootState } from "../store";
 
 export function BudgetBookScreen({route, navigation}: any) {
     const data = [
@@ -22,6 +25,12 @@ export function BudgetBookScreen({route, navigation}: any) {
         }
     ]
     const [refreshing, setRefreshing] = useState(false);
+    const dispatch = useDispatch<AppDispatch>();
+    const screenState = useSelector((state: RootState) => state.budgetBookList)
+
+    useEffect(() => {
+        dispatch(fetchBudgetBooks());
+    },[])
 
     const onRefresh = useCallback(() => {
         setRefreshing(true);
@@ -43,8 +52,8 @@ export function BudgetBookScreen({route, navigation}: any) {
                         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
                     }
                 >
-                    {data.map((book, i) =>
-                        <BudgetBookItem key={book.id} book={book} navigation={navigation}/>
+                    {screenState.budgetBooks.map((book, i) =>
+                        <BudgetBookItem key={book.id} book={book} index={i} navigation={navigation}/>
                     )}
                 </ScrollView>
             </View>

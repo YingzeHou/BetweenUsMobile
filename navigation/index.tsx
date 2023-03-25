@@ -33,6 +33,7 @@ import CollectionModal from '../components/CollectionModal';
 import DayDetailScreen from '../screens/DayDetailScreen';
 import DayModal from '../components/DayModal';
 import { BudgetBookDetailScreen } from '../screens/BudgetBookDetailScreen';
+import BudgetBookModal from '../components/BudgetBookModal';
 
 export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeName }) {
   return (
@@ -58,6 +59,13 @@ function RootNavigator() {
     category:"",
     address:"",
     pinned:-1
+  }
+
+  const dummyBookData = {
+    id:"0",
+    name:"",
+    date: "",
+    progress: 0
   }
 
   const dummyColData = {
@@ -104,12 +112,13 @@ function RootNavigator() {
         },
         headerTintColor: 'white',
         headerRight: () => (
-          <TouchableOpacity
-            style = {{height: 100}}
-            onPress={() => alert('This is a button!')}  
-          >
-            <Text style = {{fontSize:30, color:'white'}}>+</Text>
-          </TouchableOpacity>
+          <BudgetBookModal mode='create' book={dummyBookData} index={-1} triggerModal={()=>{}} navigation={null}/>
+          // <TouchableOpacity
+          //   style = {{height: 100}}
+          //   onPress={() => alert('This is a button!')}  
+          // >
+          //   <Text style = {{fontSize:30, color:'white'}}>+</Text>
+          // </TouchableOpacity>
         ),
         }} />
       

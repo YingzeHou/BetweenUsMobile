@@ -1,82 +1,94 @@
-import {View, Text, StyleSheet, Animated, TouchableOpacity, Modal, Pressable, TextInput} from 'react-native';
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { useEffect, useState } from 'react';
-import {useDispatch, useSelector} from 'react-redux';
-import {db} from "../../firebase"
-import { AppDispatch, RootState } from '../../store';
-import { createCollection, updateCollection } from '../../redux/collectionListSlice';
-import Colors from '../../constants/Colors';
+import { useEffect, useState } from "react";
+import { Modal, Text, TouchableOpacity, View, StyleSheet, TextInput, Pressable } from "react-native";
+import { useDispatch, useSelector } from "react-redux";
+import Colors from "../../constants/Colors";
+import { db } from "../../firebase";
+import { createBudgetBook, updateBudgetBook } from "../../redux/budgetbookListSlice";
+import { AppDispatch, RootState } from "../../store";
 
-interface CollectionModalProps {
+interface BudgetBookModalProps {
     mode: string,
-    collection: {
+    book: {
         id: string,
-        title: string,
-        desc: string
+        name: string,
+        date: string,
+        progress: number
     },
     index: number,
     triggerModal: Function,
     navigation: any,
-    other: any
 }
-export default function CollectionModal({mode, collection, index, triggerModal, navigation, other}: CollectionModalProps) {
+
+export default function BudgetBookModal ({mode, book, index, triggerModal, navigation}: BudgetBookModalProps) {
     const dispatch = useDispatch<AppDispatch>();
     const userState = useSelector((state: RootState) => state.user);
-    const collectionRef = db.collection("collections");
-    const [modalVisible, setModalVisible] = useState(false);
-    const [collectionName, setCollectionName] = useState("");
-    const [description, setDescription] = useState("");
 
-    useEffect(() => {
+    const [modalVisible, setModalVisible] = useState(false);
+    const [name, setName] = useState("")
+
+    const bbookRef = db.collection("budgetbooks");
+
+    useEffect(()=>{
         if(mode == 'edit') {
-            setCollectionName(collection.title);
-            setDescription(collection.desc);
+            setName(book.name);
             setModalVisible(true)
         }
     },[])
-    const create = () => {
 
-        collectionRef.add({
-            title: collectionName,
-            desc: description,
+    const getCurrDate = () => {
+        var currDate = new Date();
+        const offset = currDate.getTimezoneOffset(); 
+        currDate = new Date(currDate.getTime() - (offset*60*1000));
+        const currDateStr = currDate.toISOString().split('T')[0];
+        return currDateStr;
+    }
+    const create = () => {
+        const currDateStr = getCurrDate();
+
+        bbookRef.add({
+            name: name,
+            date: currDateStr,
+            progress: 0,
             users: [userState.user.userId, userState.user.pairUser.userId]
         })
         .then((docRef) => {
-            dispatch(createCollection({
+            dispatch(createBudgetBook({
                 id: docRef.id,
-                title: collectionName,
-                desc: description,
+                name: name,
+                date: currDateStr,
+                progress: 0,
                 users: [userState.user.userId, userState.user.pairUser.userId]
-            }));
+            }))
         })
 
-        setModalVisible(false)
+        setModalVisible(false);
+        setName("");
     }
-
+    
     const update = () => {
+        const currDateStr = getCurrDate();
         const data = {
-            title: collectionName,
-            desc: description,
+            name: name,
+            date: currDateStr,
+            progress: book.progress
         }
 
-        dispatch(updateCollection({
-            atIndex: index,
-            title: collectionName,
-            desc: description,
-            users: [userState.user.userId, userState.user.pairUser.userId]
-        }))
-
-        collectionRef.doc(collection.id)
+        bbookRef.doc(book.id)
         .update(data)
         .then(()=>{
-            
+            dispatch(updateBudgetBook({
+                atIndex: index,
+                name: name,
+                date: currDateStr,
+                progress: book.progress,
+                users: [userState.user.userId, userState.user.pairUser.userId]
+            }))
         })
         .catch((error) => alert(error));
 
         setModalVisible(false)
-        other.closeRow(index, "absolute")
+        triggerModal(false)
     }
-
     return (
         <View>
             {mode == 'create'? 
@@ -102,23 +114,17 @@ export default function CollectionModal({mode, collection, index, triggerModal, 
                 <TouchableOpacity 
                     style={styles.container} 
                     activeOpacity={1} 
-                    onPressOut={mode=='create'? () => {setModalVisible(false)}: () => {triggerModal(false), other.closeRow(other.index, "absolute")}}
+                    onPressOut={mode=='create'? () => {setModalVisible(false)}: () => {triggerModal(false)}}
                 >
                 <View style={styles.centeredView}>
                 <View style={styles.modalView}>
-                    <Text style={styles.modalText}>{mode=='create'? "Create Collection": "Edit Collection"}</Text>
+                    {/* <Text style={styles.modalText}>Create Account Book</Text> */}
+                    <Text style={styles.modalText}>{mode=='create'? "Create Account Book": "Edit Account Book"}</Text>
                     <TextInput
                         placeholder="Collection Name"
                         placeholderTextColor="gray"
-                        value={collectionName}
-                        onChangeText = {setCollectionName}
-                        style={styles.textInput}
-                    />
-                    <TextInput
-                        placeholder="Description"
-                        placeholderTextColor="gray"
-                        value={description}
-                        onChangeText = {setDescription}
+                        value={name}
+                        onChangeText = {setName}
                         style={styles.textInput}
                     />
                     {mode == 'create'?
@@ -145,7 +151,6 @@ export default function CollectionModal({mode, collection, index, triggerModal, 
         </View>
     )
 }
-
 const styles = StyleSheet.create({
     container:{
         flex:1,
@@ -172,19 +177,15 @@ const styles = StyleSheet.create({
       shadowRadius: 10,
     },
     button: {
-      borderRadius: 20,
-      padding: 10,
-      elevation: 2,
-    },
-
-    buttonClose: {
-        marginTop:10,
-        backgroundColor: Colors.borderColor,
+        marginVertical:10,
+        borderRadius: 20,
+        padding: 10,
+        elevation: 2,
     },
     textStyle: {
-      color: 'black',
-      fontWeight: 'bold',
-      textAlign: 'center',
+        color: 'black',
+        fontWeight: 'bold',
+        textAlign: 'center',
     },
     buttonTextStyle: {
         color: 'white',
@@ -192,9 +193,9 @@ const styles = StyleSheet.create({
         textAlign: 'center',
     },
     modalText: {
-      marginBottom: 15,
-      textAlign: 'center',
-      fontSize:18
+        marginBottom: 15,
+        textAlign: 'center',
+        fontSize:18
     },
     textInput: {
         width:'50%',

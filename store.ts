@@ -4,13 +4,15 @@ import userSlice from './redux/userSlice';
 import pairUserSlice from './redux/pairUserSlice';
 import collectionListSlice from './redux/collectionListSlice';
 import dayListSlice from './redux/dayListSlice';
+import budgetbookListSlice from './redux/budgetbookListSlice';
 
 const rootReducer = combineReducers({
     todoList: todoListSlice,
     user: userSlice,
     pairUser: pairUserSlice,
     collectionList: collectionListSlice,
-    dayList: dayListSlice
+    dayList: dayListSlice,
+    budgetBookList: budgetbookListSlice
 });
 
 export type RootState = ReturnType<typeof rootReducer>;

@@ -3,17 +3,52 @@ import Colors from "../../constants/Colors";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useActionSheet } from '@expo/react-native-action-sheet';
 import CircularProgress from 'react-native-circular-progress-indicator';
+import { useCallback, useState } from "react";
+import BudgetBookModal from "../BudgetBookModal";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../../store";
+import { deleteBudgetBook } from "../../redux/budgetbookListSlice";
+import { db } from "../../firebase";
+import { DeleteModal } from "../DeleteModal";
 
 interface BudgetBookItemProps {
     book: {
         id: string,
         name: string,
-        date: string
+        date: string,
+        progress: number
     },
+    index: number,
     navigation: any,
 }
-export function BudgetBookItem({book, navigation}: BudgetBookItemProps) {
+export function BudgetBookItem({book, index, navigation}: BudgetBookItemProps) {
     const { showActionSheetWithOptions } = useActionSheet();
+    const [editModalVisible, setEditModalVisible] = useState(false)
+    const [deleteModalVisible, setDeleteModalVisible] = useState(false)
+
+    const triggerEditModal = useCallback((visible: boolean) => {
+        setEditModalVisible(visible);
+    }, [])
+    const triggerDelModal = useCallback((visible: boolean) => {
+        setDeleteModalVisible(visible);
+    }, [])
+
+    const dispatch = useDispatch<AppDispatch>();
+    const bbookRef = db.collection("budgetbooks");
+
+    const deleteBook = () => {
+
+        bbookRef.doc(book.id).delete()
+        .then(() => {
+            dispatch(deleteBudgetBook({
+                atIndex: index
+            }))
+        })
+        .catch((error) => alert(error));
+
+    }
+
     const onPress = () => {
         const options = ['Delete', 'Edit', 'Cancel'];
         const destructiveButtonIndex = 0;
@@ -27,12 +62,12 @@ export function BudgetBookItem({book, navigation}: BudgetBookItemProps) {
         }, (selectedIndex) => {
           switch (selectedIndex) {
             case editButtonIndex:
-              alert("EDIT")
+              setEditModalVisible(true);
               break;
     
             case destructiveButtonIndex:
               // Delete
-              alert("DELETE")
+              setDeleteModalVisible(true)
               break;
     
             case cancelButtonIndex:
@@ -41,36 +76,41 @@ export function BudgetBookItem({book, navigation}: BudgetBookItemProps) {
         });
     }
     return (
-        <Pressable 
-            style={({pressed}) => [styles.container, {backgroundColor:pressed? 'darkgray': Colors.borderColor}]}
+        <View style={{flex:1}}>
+        <TouchableOpacity 
             onPress={()=>navigation.navigate("BudgetBookDetail", {
                 book: book
             })}
         >
-            <View style={styles.iconBox}>
-                <MaterialCommunityIcons name="book-sync-outline" size={40} color={Colors.borderColor} />
+            <View style={styles.container}>
+                <View style={styles.iconBox}>
+                    <MaterialCommunityIcons name="book-sync-outline" size={40} color={Colors.borderColor} />
+                </View>
+                <View style={styles.textBox}>
+                    <Text style={styles.text}>{book.name}</Text>
+                    <Text style={styles.smallText}>update on: {book.date}</Text>
+                </View>
+                <View style={styles.progressBox}>
+                    <CircularProgress
+                        value={book.progress}
+                        radius={18}
+                        inActiveStrokeColor={'#2ecc71'}
+                        inActiveStrokeOpacity={0.2}
+                        progressValueColor={'white'}
+                        valueSuffix={'%'}
+                    />
+                </View>
+                <TouchableOpacity 
+                    style={styles.smallIconBox}
+                    onPress={()=>{onPress()}}
+                >
+                    <MaterialCommunityIcons name="dots-horizontal-circle-outline" size={25} color='white' />
+                </TouchableOpacity>
             </View>
-            <View style={styles.textBox}>
-                <Text style={styles.text}>{book.name}</Text>
-                <Text style={styles.smallText}>{book.date}</Text>
-            </View>
-            <View style={styles.progressBox}>
-                <CircularProgress
-                    value={45}
-                    radius={18}
-                    inActiveStrokeColor={'#2ecc71'}
-                    inActiveStrokeOpacity={0.2}
-                    progressValueColor={'white'}
-                    valueSuffix={'%'}
-                />
-            </View>
-            <TouchableOpacity 
-                style={styles.smallIconBox}
-                onPress={()=>{onPress()}}
-            >
-                <MaterialCommunityIcons name="dots-horizontal-circle-outline" size={25} color='white' />
-            </TouchableOpacity>
-        </Pressable>
+        </TouchableOpacity>
+        {editModalVisible && <BudgetBookModal mode='edit' book={book} index={index} triggerModal={triggerEditModal} navigation={navigation}/>}
+        {deleteModalVisible && <DeleteModal setVisibleCallback={triggerDelModal} operation={deleteBook} page='budgetBook' other={null}/>}
+        </View>
     )
 }
 

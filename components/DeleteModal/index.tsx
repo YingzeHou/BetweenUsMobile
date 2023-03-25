@@ -21,12 +21,13 @@ export function DeleteModal({setVisibleCallback, operation, page, other}: Delete
             <TouchableOpacity 
                 style={styles.modalContainer} 
                 activeOpacity={0} 
-                onPressOut={page=='day'? () => {setVisibleCallback(false)}: () => {setVisibleCallback(false), other.closeRow(other.index, "absolute")}}
+                onPressOut={page!='collection'? () => {setVisibleCallback(false)}: () => {setVisibleCallback(false), other.closeRow(other.index, "absolute")}}
             >
             <View style={styles.centeredView}>
             <View style={styles.modalView}>
                 <Text style={styles.modalText}>Are you sure to delete?</Text>
-                {page=='collection' &&  <Text style={styles.modalText}>All todos within will be deleted</Text>}
+                {page=='collection' && <Text style={styles.modalText}>All todos within will be deleted</Text>}
+                {page=='budgetBook' && <Text style={styles.modalText}>All budget plans within will be deleted</Text>}
                 <Pressable
                     style={({pressed}) => [page=='day'? styles.buttonDay: styles.buttonCol, {backgroundColor:pressed? 'gray': Colors.alertColor}]}
                     onPress={() => operation()}

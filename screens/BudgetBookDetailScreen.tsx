@@ -1,6 +1,10 @@
+import { useEffect } from "react";
 import { View, StyleSheet, Pressable, Text } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
+import { useDispatch, useSelector } from "react-redux";
 import BudgetDetailCard from "../components/BudgetDetailCard";
+import { fetchPlans } from "../redux/planListSlice";
+import { AppDispatch, RootState } from "../store";
 
 export function BudgetBookDetailScreen ({route, navigation}: any) {
     const data = [
@@ -38,12 +42,17 @@ export function BudgetBookDetailScreen ({route, navigation}: any) {
         }
     ]
     const {book} = route.params
+    const dispatch = useDispatch<AppDispatch>();
+    const screenState = useSelector((state: RootState) => state.planList)
+    useEffect(() => {
+        dispatch(fetchPlans(book.id));
+    },[])
     return (
         <View style={styles.container}>
             <ScrollView
                 contentContainerStyle={styles.scroll}
             >
-                {data.map((plan, i) => 
+                {screenState.plans.map((plan, i) => 
                     <BudgetDetailCard key={i} plan={plan}/>
                 )}
 

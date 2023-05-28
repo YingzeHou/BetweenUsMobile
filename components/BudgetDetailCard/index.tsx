@@ -4,13 +4,22 @@ import CircularProgress from 'react-native-circular-progress-indicator';
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useActionSheet } from '@expo/react-native-action-sheet';
 
+
+interface composition {
+    id: string,
+    type: string,
+    category: string,
+    amount: number,
+}
+
 interface BudgetDetailCardProps {
     plan: {
         id: string,
         parentId: string,
-        title: string,
-        desiredAmount: number,
-        currentAmount: number,
+        name: string,
+        expComps: composition[],
+        actComps: composition[],
+        users: any[]
     }
 }
 export default function BudgetDetailCard({plan}: BudgetDetailCardProps) {
@@ -41,15 +50,32 @@ export default function BudgetDetailCard({plan}: BudgetDetailCardProps) {
           }
         });
     }
+
+    const getAmount = (type: string) => {
+        if(type === 'expect') {
+            var sum = 0;
+            for(const i of plan.expComps) {
+                sum+=i.amount
+            }
+            return sum;
+        }
+        else {
+            var sum = 0;
+            for(const i of plan.actComps) {
+                sum+=i.amount
+            }
+            return sum;
+        }
+    }
     return (
         <Pressable
             style={({pressed}) => [styles.card, {backgroundColor:pressed? 'gray': 'rgba(0,29,56, .6)'}]}
             onPress={()=>alert("OPEN")}
         >
-            <Text style={styles.title}>{plan.title}</Text>
+            <Text style={styles.title}>{plan.name}</Text>
             <View style={styles.progressBox}>
                 <CircularProgress
-                    value={plan.currentAmount / plan.desiredAmount * 100}
+                    value={getAmount('actual') / getAmount('expect') * 100}
                     radius={35}
                     inActiveStrokeColor={Colors.borderColor}
                     inActiveStrokeOpacity={0.8}
@@ -68,7 +94,7 @@ const styles = StyleSheet.create({
     card: {
         width:'40%',
         height:'25%',
-        backgroundColor: 'rgba(0,29,56, .6)',
+        backgroundColor: Colors.borderColorLight,
         borderRadius:25,
         marginVertical:10,
         marginHorizontal:10,

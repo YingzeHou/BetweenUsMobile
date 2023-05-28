@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef} from "react"
-import { TextInput, View, StyleSheet, Keyboard } from "react-native"
+import { TextInput, View, StyleSheet, Keyboard, NativeSyntheticEvent, TextInputKeyPressEventData } from "react-native"
 import CheckBox from "../CheckBox"
 import {db, auth} from "../../firebase"
 
@@ -11,7 +11,6 @@ interface TodoItemProps {
         parentId: string
         isCompleted: boolean,
         users: any[]
-
     }
     onSubmit: ()=>void,
     onDelete: ()=>void,
@@ -21,7 +20,7 @@ interface TodoItemProps {
 export default function TodoItem({todo, onSubmit, onDelete, onUpdate, focus}: TodoItemProps) {
     const [isChecked, setIsChecked] = useState(false);
     const [content, setContent] = useState('');
-    const input = useRef(null);
+    const input = useRef<TextInput>(null);
     // console.log(focus)
 
     useEffect(() => {
@@ -48,7 +47,7 @@ export default function TodoItem({todo, onSubmit, onDelete, onUpdate, focus}: To
         setIsChecked(!isChecked);
     } 
 
-    const onKeyPress = ({nativeEvent}) => {
+    const onKeyPress = ({nativeEvent}: NativeSyntheticEvent<TextInputKeyPressEventData>) => {
         if(nativeEvent.key === "Backspace" && content === '') {
             // delete item
             onDelete();
@@ -58,12 +57,9 @@ export default function TodoItem({todo, onSubmit, onDelete, onUpdate, focus}: To
         <View style={{flexDirection:'row', alignItems:'center', justifyContent:'center', marginBottom:10}}>
             <CheckBox isChecked={isChecked} onPress={updateStatus}/>
             <TextInput
-                // autoFocus={false}
                 ref={input}
                 value={content}
                 onChangeText={(text)=>updateText(text)}
-                // onChangeText = {setContent}
-                // onEndEditing = {updateText}
                 style={isChecked? styles.textCompleted: styles.textInput}
                 onSubmitEditing={onSubmit}
                 blurOnSubmit

@@ -27,13 +27,14 @@ import CollectionScreen from '../screens/CollectionScreen';
 import SignInScreen from '../screens/SignInScreen';
 import SignUpScreen from '../screens/SignUpScreen';
 import SplashScreen from '../screens/SplashScreen';
-import {useDispatch, useSelector} from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 import { AppDispatch } from '../store';
 import CollectionModal from '../components/CollectionModal';
 import DayDetailScreen from '../screens/DayDetailScreen';
 import DayModal from '../components/DayModal';
 import { BudgetBookDetailScreen } from '../screens/BudgetBookDetailScreen';
 import BudgetBookModal from '../components/BudgetBookModal';
+import BudgetPlanModal from '../components/BudgetPlanModal';
 
 export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeName }) {
   return (
@@ -53,25 +54,25 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 
 function RootNavigator() {
   const dummyDayData = {
-    id:"0",
-    event:"",
-    startDate:"",
-    category:"",
-    address:"",
-    pinned:-1
+    id: "0",
+    event: "",
+    startDate: "",
+    category: "",
+    address: "",
+    pinned: -1
   }
 
   const dummyBookData = {
-    id:"0",
-    name:"",
+    id: "0",
+    name: "",
     date: "",
     progress: 0
   }
 
   const dummyColData = {
-    id:"0",
-    title:"",
-    desc:""
+    id: "0",
+    title: "",
+    desc: ""
   }
   return (
     <Stack.Navigator>
@@ -80,75 +81,68 @@ function RootNavigator() {
       <Stack.Screen name="SignUp" component={SignUpScreen} options={{ headerShown: false }} />
       <Stack.Screen name="Root" component={BottomTabNavigator} options={{ headerShown: false }} />
       <Stack.Screen name="NotFound" component={NotFoundScreen} options={{ title: 'Oops!' }} />
-      <Stack.Screen name="Collection" component={CollectionScreen} options={{ 
+      <Stack.Screen name="Collection" component={CollectionScreen} options={{
         title: 'Our Collections',
         headerStyle: {
           backgroundColor: Colors.borderColor,
         },
         headerTintColor: 'white',
         headerRight: () => (
-          <CollectionModal mode='create' collection={dummyColData} index={-1} triggerModal={()=>{}} navigation={null} other={null}/>
+          <CollectionModal mode='create' collection={dummyColData} index={-1} triggerModal={() => { }} navigation={null} other={null} />
         ),
-        }} />
-      <Stack.Screen name="Note" component={NoteScreen} options={{ 
+      }} />
+      <Stack.Screen name="Note" component={NoteScreen} options={{
         title: 'Todos',
         headerStyle: {
           backgroundColor: Colors.borderColor,
         },
         headerTintColor: 'white',
-        // headerRight: () => (
-        //   <TouchableOpacity
-        //     style = {{height: 100, marginTop: -5}}
-        //     onPress={() => alert('This is a button!')}  
-        //   >
-        //     <Text style = {{fontSize:30, color:'white'}}>...</Text>
-        //   </TouchableOpacity>
-        // ),
-        }} />
-      <Stack.Screen name="Budget" component={BudgetScreen} options={{ 
+      }} />
+      <Stack.Screen name="Budget" component={BudgetScreen} options={{
         title: 'Our Budget',
         headerStyle: {
           backgroundColor: Colors.borderColor,
         },
         headerTintColor: 'white',
         headerRight: () => (
-          <BudgetBookModal mode='create' book={dummyBookData} index={-1} triggerModal={()=>{}} navigation={null}/>
-          // <TouchableOpacity
-          //   style = {{height: 100}}
-          //   onPress={() => alert('This is a button!')}  
-          // >
-          //   <Text style = {{fontSize:30, color:'white'}}>+</Text>
-          // </TouchableOpacity>
+          <BudgetBookModal mode='create' book={dummyBookData} index={-1} triggerModal={() => { }} navigation={null} />
         ),
-        }} />
-      
-      <Stack.Screen name="BudgetBookDetail" component={BudgetBookDetailScreen} options={{ 
-        title: 'Budget Detail',
-        headerStyle: {
-          backgroundColor: Colors.borderColor,
-        },
-        headerTintColor: 'white',
       }} />
 
-      <Stack.Screen name="Days" component={DaysScreen} options={{ 
+      <Stack.Screen 
+        name="BudgetBookDetail" 
+        component={BudgetBookDetailScreen} 
+        options = {({route}) => ({
+          title: 'Budget Detail',
+          headerStyle: {
+            backgroundColor: Colors.borderColor,
+          },
+          headerTintColor: 'white',
+          headerRight: () => (
+            <BudgetPlanModal mode='create' triggerModal={()=>{}} parentId = {route.params?.parentId}/>
+          )
+        })}
+      />
+
+      <Stack.Screen name="Days" component={DaysScreen} options={{
         title: 'Our Days',
         headerStyle: {
           backgroundColor: Colors.borderColor,
         },
         headerTintColor: 'white',
         headerRight: () => (
-          <DayModal mode='create' day={dummyDayData} index={-1} triggerModal={()=>{}} navigation={null}/>
+          <DayModal mode='create' day={dummyDayData} index={-1} triggerModal={() => { }} navigation={null} />
         ),
-        }} />
+      }} />
 
-      <Stack.Screen name="DayDetail" component={DayDetailScreen} options={{ 
+      <Stack.Screen name="DayDetail" component={DayDetailScreen} options={{
         title: 'Day Detail',
         headerStyle: {
           backgroundColor: Colors.borderColor,
         },
         headerTintColor: 'white',
-        }} />
-        
+      }} />
+
       <Stack.Group screenOptions={{ presentation: 'modal' }}>
         <Stack.Screen name="Modal" component={ModalScreen} />
       </Stack.Group>
@@ -171,7 +165,7 @@ function BottomTabNavigator() {
       // screenOptions={{
       //   tabBarActiveTintColor: Colors[colorScheme].tint,
       // }}
-      
+
       screenOptions={({ route }) => ({
         tabBarIcon: ({ focused, color, size }) => {
           let iconName;
@@ -192,7 +186,7 @@ function BottomTabNavigator() {
         tabBarActiveTintColor: 'pink',
         tabBarInactiveTintColor: 'gray',
       })}
-      >
+    >
       <BottomTab.Screen
         name="TabOne"
         component={TabOneScreen}

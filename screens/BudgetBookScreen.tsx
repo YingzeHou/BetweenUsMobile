@@ -7,23 +7,6 @@ import { fetchBudgetBooks } from "../redux/budgetbookListSlice";
 import { AppDispatch, RootState } from "../store";
 
 export function BudgetBookScreen({route, navigation}: any) {
-    const data = [
-        {
-            id:'1',
-            name: 'Travel Book',
-            date: '2019-01-02'
-        },
-        {
-            id:'2',
-            name: 'Education Book',
-            date: '2019-09-20'
-        },
-        {
-            id:'3',
-            name: 'Asset Book',
-            date: '2022-03-14'
-        }
-    ]
     const [refreshing, setRefreshing] = useState(false);
     const dispatch = useDispatch<AppDispatch>();
     const screenState = useSelector((state: RootState) => state.budgetBookList)

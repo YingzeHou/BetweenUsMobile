@@ -5,7 +5,6 @@ import { useActionSheet } from '@expo/react-native-action-sheet';
 import CircularProgress from 'react-native-circular-progress-indicator';
 import { useCallback, useState } from "react";
 import BudgetBookModal from "../BudgetBookModal";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../store";
 import { deleteBudgetBook } from "../../redux/budgetbookListSlice";
@@ -79,7 +78,8 @@ export function BudgetBookItem({book, index, navigation}: BudgetBookItemProps) {
         <View style={{flex:1}}>
         <TouchableOpacity 
             onPress={()=>navigation.navigate("BudgetBookDetail", {
-                book: book
+                book: book,
+                parentId: book.id
             })}
         >
             <View style={styles.container}>

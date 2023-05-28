@@ -13,7 +13,7 @@ export default function NoteScreen({route, navigation}: any) {
     const dispatch = useDispatch<AppDispatch>();
     const screenState = useSelector((state: RootState) => state.todoList)
     const userState = useSelector((state: RootState) => state.user);
-
+    console.log(screenState.todos)
     const {parentId} = route.params;
     const [isMounted, setIsMounted] = useState(false);
     const isFirstMount = useRef(true);
